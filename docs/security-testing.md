@@ -17,10 +17,7 @@ The Flask login route checks both values after reading them from the request:
 
 ```python
 if not username or not password:
-    return render_template(
-        "login.html",
-        error="Invalid username or password."
-    ), 400
+    return render_template("login.html", error="Invalid username or password."), 200
 ```
 
 ### Retest
@@ -72,28 +69,38 @@ The malformed request was handled by the application's validation instead of bei
 ## 3. Username and Password Length Validation
 
 ### What I tested
-I modified the login request in Burp so the username or password exceeded the application's 16 character limit
+I modified the login request in Burp so the username or password exceeded the application's original 16 character limit.
 
 ### Security reasoning
 The browser is controlled by the client, so input length restrictions cannot rely only on the visible HTML form. The server should enforce the application's accepted input boundaries as well.
 
-### Server-side control
+### Original server-side control
 
 ```python
 if len(username) > 16 or len(password) > 16:
-    return render_template(
-        "login.html",
-        error="Username or password cannot exceed 16 characters."
-    ), 400
+    return render_template("login.html", error="Username or password cannot exceed 16 characters."), 400
 ```
 
 ### Retest
 I submitted oversized values through Burp instead of relying on the normal browser interface.
 
 ### Result
-The server rejected the request with HTTP 400 and returned the expected validation message.
+The server rejected the oversized values rather than processing them normally.
 
-**Status:** Control verified.
+**Status:** Control verified for the original boundary.
+
+### Current boundary
+The username maximum remains 16 characters. The password maximum has since been increased to 32 characters and is now validated separately:
+
+```python
+if len(username) > 16:
+    return render_template("login.html", error="Username cannot exceed 16 characters."), 200
+
+if len(password) > 32:
+    return render_template("login.html", error="Password cannot exceed 32 characters."), 200
+```
+
+The new 32 character password boundary should be included in the next regression test.
 
 ---
 
@@ -124,6 +131,67 @@ Jinja's normal template escaping prevented the value from being interpreted as a
 
 ### Important note
 This test does not prove that the entire application is free of XSS. Output handling must still be reviewed anywhere user-controlled data is inserted into HTML, JavaScript, URLs, attributes, or other contexts. User-controlled values should not be marked safe unless they are intentionally trusted and handled appropriately.
+
+---
+
+## 5. Username Enumeration Through Response Timing
+
+### What I tested
+I sent login requests through Burp using an invalid password while alternating between a known valid username and a username that did not exist.
+
+### Original behavior
+The two cases returned the same generic error message, but their response times were very different:
+
+- Invalid username: approximately 2-6 ms
+- Valid username with an invalid password: approximately 128-130 ms
+
+The difference was large and repeatable enough to distinguish whether a username existed.
+
+### Root cause
+The original authentication condition used short-circuit evaluation:
+
+```python
+if not user or not check_password_hash(user.password_hash, password):
+    return render_template("login.html", error="Invalid username or password."), 401
+```
+
+When the username did not exist, `not user` evaluated to true and Python skipped `check_password_hash()`. When the username did exist, the application performed the intentionally expensive scrypt password verification.
+
+This created a timing side channel even though the visible error message was generic.
+
+### Remediation
+A dummy scrypt hash is generated once when the application starts:
+
+```python
+DUMMY_HASH = generate_password_hash('random-dummy-password-hash')
+```
+
+The login path now performs one password hash verification whether or not the user exists:
+
+```python
+if not user:
+    password_valid = check_password_hash(DUMMY_HASH, password)
+else:
+    password_valid = check_password_hash(user.password_hash, password)
+
+if not user or not password_valid:
+    return render_template("login.html", error="Invalid username or password."), 401
+```
+
+A nonexistent user still cannot authenticate because the final decision requires the user to exist. The dummy hash only makes the expensive verification work more comparable between the two paths.
+
+### Retest
+I repeated the same timing test in Burp after applying the remediation.
+
+### Result
+Observed response times after remediation:
+
+- Valid username with an invalid password: 126 ms
+- Invalid username: 133 ms
+
+The previous large and reliable timing difference was no longer present in the retest.
+
+**Status:** Remediated and retested.
 
 ---
 
