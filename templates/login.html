@@ -1,35 +1,46 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+    <head>  
+        <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">  
+        <title>Login</title>  
+        <link rel="stylesheet" href="/static/css/style.css">
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
 
-     <head>
-         <title>Secure Todo</title> 
-         <style>
-            .form-group {
-                margin-bottom: 15px;
-            }
-        </style>
-        </head>
+    </head>
+    <body>  
+        <div class="authContainer">
+           
+                <h2>Login</h2>
+             <form id="loginForm" class="loginForm" method="post" action="/login">
 
-         <body> 
-            <h1>Let's get back to those tasks!</h1> 
-            <form method="POST" action="/login">
-                {% if error %}
-                    <p style="color: red;">{{ error }}</p>
-                {% endif %}
-
-                <div class="form-group">
-                    <label for="username">Username:</label>
-                    <input type="text" id="username" name="username" required>
+                <div class="usernameContainer">
+                    <div>Username</div>
+                    <input type="text" name="username">
+                </div>
+            
+                <div class="passwordContainer">
+                    <div>Password</div>
+                    <input type="password" name="password">
                 </div>
 
-                <div class="form-group">
-                    <label for="password">Password:</label>
-                    <input type="password" id="password" name="password" required>
+                <div class="loginButtonDiv">
+                    <button type="submit" id="loginButton" class="loginButton">Login</button>
                 </div>
+             </form>
+        </div>
 
-             <button type="submit">Login</button>
-         </form>
-         <p>Don't have an account? <a href="/register">Register here</a></p>
-        </body>
+        <div class="appContainer">
+        <h1 class="header">TODOS</h1>  
+            <div class="add_todo">
+                <input class="">Add Todo</input>
+            
+            <div id="todos_container" class="container">
+                <div class="todo">1</div>
+                <div class="todo">2</div>
+                <div class="todo">3</div>
+                <div class="todo">4</div>
+        </div>
+        <script src="login.js"></script>
         
-        </html>
+    </body>
+</html>  
