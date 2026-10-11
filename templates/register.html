@@ -1,35 +1,34 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+    <head>  
+        <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">  
+        <title>Login</title>  
+        <link rel="stylesheet" href="/static/css/style.css">
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
 
-     <head>
-         <title>Secure Todo</title> 
-         <style>
-            .form-group {
-                margin-bottom: 15px;
-            }
-        </style>
-        </head>
-
-         <body> 
-            <h1>Let's get started.</h1> 
-            <form method="POST" action="/register">
+    </head>
+    <body>  
+        <div class="authContainer">
+           
+                <h2>Register</h2>
+             <form id="loginForm" class="authForm" method="post" action="/login">
                 {% if error %}
                     <p style="color: red;">{{ error }}</p>
                 {% endif %}
-
-                <div class="form-group">
-                    <label for="username">Username:</label>
-                    <input type="text" id="username" name="username" required>
+                <div class="usernameContainer">
+                    <div>Username</div>
+                    <input type="text" name="username">
+                </div>
+            
+                <div class="passwordContainer">
+                    <div>Password</div>
+                    <input type="password" name="password">
                 </div>
 
-                <div class="form-group">
-                    <label for="password">Password:</label>
-                    <input type="password" id="password" name="password" required>
+                <div class="authButtonDiv">
+                    <button type="submit" id="registerButton" class="authButton">Register</button>
                 </div>
-
-             <button type="submit">Register</button>
-         </form>
-         <p>Already have an account? <a href="/login">Log in here</a></p>
-        </body>
-        
-        </html>
+             </form>
+        </div>
+    </body>
+</html>  

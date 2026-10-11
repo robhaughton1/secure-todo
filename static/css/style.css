@@ -8,7 +8,6 @@ body{
     display: flex;
     justify-content: center;
     background-color: 	#1a0733;
-    
     color: rgb(144, 120, 201);
     padding: 5px;
     font-family: 'Poppins', sans-serif;
@@ -69,37 +68,37 @@ body{
     display: flex;
     justify-content: center;
 }
-.loginForm{
+.authForm{
     display:block;
 }
 
 
-.loginButtonDiv{
+.authButtonDiv{
     display: flex;
     justify-content: center;
     margin-top: 5%;
     height: 2.5rem;
     
 }
-.loginButton{
+.authButton{
     background-color: #201a35;
     width: 10rem;
     color: aliceblue;
     border: none;
     outline: 3px solid #251f3d;
 }
-.loginButton:hover{
+.authButton:hover{
     transform: scale(1.1);
     background-color: #322a4e;
     transition: 0.3s ease;
 }
-.loginButton:not(:hover){
+.authButton:not(:hover){
     transform: scale(1);
     background-color: #201a35;
     transition: 0.3s ease;
 
 }
-.loginButton:active{
+.authButton:active{
     
    background-color: #322a4e;
 }
