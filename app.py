@@ -1,6 +1,26 @@
-from flask import Flask, render_template, request
+import os
+from dotenv import load_dotenv
+from flask import Flask, render_template, request, session
+from flask_sqlalchemy import SQLAlchemy
+from werkzeug.security import generate_password_hash, check_password_hash
 
+# Initialize the Flask application and load environment variables from the .env file
 application = Flask(__name__)
+load_dotenv()
+
+application.secret_key = os.environ['SECRET_KEY']  # Use the secret key for session management and security features in Flask
+if not application.secret_key:
+    raise KeyError("No SECRET_KEY set for Flask application. Please set it within the appropriate file.")
+
+# Configure the SQLAlchemy database URI to use a SQLite database named 'secure_todo.db' 
+application.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///secure_todo.db'
+database = SQLAlchemy(application)
+
+# Makes the database schema for the User model, which includes an id, username, and password_hash. The username is unique and cannot be null, while the password_hash isnt unique but also cannot be null. The id is the primary key for the User model.
+class User(database.Model):
+    id = database.Column(database.Integer, primary_key=True)
+    username = database.Column(database.String(16), unique=True, nullable=False)
+    password_hash = database.Column(database.String(255), nullable=False)
 
 # Home route logic, rendering the home.html template.
 @application.route('/')
@@ -30,10 +50,19 @@ def login():
         # Input validation for username and password, renders login.html with an error message if empty or invalid
         if not username or not password:
             return render_template('login.html', error = 'Invalid username or password.'), 400
-
+        
+        # Check if the username or password exceeds 16 characters, renders login.html with an error message if it does
         if len(username) > 16 or len(password) > 16:
-            return render_template('login.html', error = 'Username or password cannot exceed 16 characters.'), 400      
+            return render_template('login.html', error = 'Username or password cannot exceed 16 characters.'), 400
 
+        # Query the database for the user with the provided username
+        user = database.session.scalar(
+                database.select(User).where(User.username == username))
+        
+        if not user or not check_password_hash(user.password_hash, password):
+            return render_template('login.html', error = 'Invalid username or password.'), 401
+
+        
         return render_template('home.html', username = username)
     return render_template('login.html')
 
@@ -44,15 +73,41 @@ def register():
         username = request.form.get('username', '').strip()
         password = request.form.get('password', '')
 
-        # Input validation for username and password, renders register.html with an error message if empty or invalid
+        # Input validation for username and password, renders register.html with a 409 error if empty or invalid
         if not username or not password:
-            return render_template('register.html', error = 'Invalid username or password.'), 400
+            return render_template('register.html', error = 'Invalid username or password.'), 409
 
+        # Check if the username or password exceeds 16 characters, renders register.html with a 409 error if it does
         if len(username) > 16 or len(password) > 16:
-            return render_template('register.html', error = 'Username or password cannot exceed 16 characters.'), 400
+            return render_template('register.html', error = 'Username or password cannot exceed 16 characters.'), 409
 
+        # Check if the username already exists in the database
+        existing_user = database.session.scalar(
+                database.select(User).where(User.username == username))
+
+        # If the username already exists, render register.html with an error message and a 409 status code
+        if existing_user:
+            return render_template('register.html', error = 'Username is unavailable.'), 409
+
+        # Makes the password more secure by hashing it before storing it in the database
+        password_hash = generate_password_hash(password)
+
+        # Create a new user instance with the provided username and hashed password
+        new_user = User(
+                username=username,
+                password_hash=password_hash)
+          
+        # Add the new user to the database session and commit the changes to save it in the database
+        database.session.add(new_user)
+        database.session.commit()
+
+        # Finally, render the home.html template with the username after successful registration
         return render_template('home.html', username = username)
     return render_template('register.html')
 
+# Run the application in debug mode and create the database tables if they don't exist
 if __name__ == '__main__':
+    with application.app_context():
+        database.create_all()  # Create the database tables if they don't exist
+
     application.run(debug=True)
