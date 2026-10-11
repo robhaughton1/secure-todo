@@ -22,6 +22,8 @@ class User(database.Model):
     username = database.Column(database.String(16), unique=True, nullable=False)
     password_hash = database.Column(database.String(255), nullable=False)
 
+DUMMY_HASH = generate_password_hash('random-dummy-password-hash')  # Generate a dummy hash for timing attack prevention
+
 # Home route logic, rendering the home.html template.
 @application.route('/')
 def home_redirect():
@@ -49,20 +51,29 @@ def login():
 
         # Input validation for username and password, renders login.html with an error message if empty or invalid
         if not username or not password:
-            return render_template('login.html', error = 'Invalid username or password.'), 400
+            return render_template('login.html', error = 'Invalid username or password.'), 200
         
-        # Check if the username or password exceeds 16 characters, renders login.html with an error message if it does
-        if len(username) > 16 or len(password) > 16:
-            return render_template('login.html', error = 'Username or password cannot exceed 16 characters.'), 400
+        # Check if the username or password exceeds 16 or 32 characters, renders login.html with an error message if it does
+        if len(username) > 16:
+            return render_template('login.html', error='Username cannot exceed 16 characters.'), 200
 
+        if len(password) > 32:
+            return render_template('login.html', error='Password cannot exceed 32 characters.'), 200
+        
         # Query the database for the user with the provided username
         user = database.session.scalar(
                 database.select(User).where(User.username == username))
-        
-        if not user or not check_password_hash(user.password_hash, password):
-            return render_template('login.html', error = 'Invalid username or password.'), 401
 
-        
+        # Check if the user exists and validate the password using the check_password_hash function. If the user does not exist, use a dummy hash to prevent timing attacks.
+        if not user:
+            password_valid = check_password_hash(DUMMY_HASH, password)
+        else:
+            password_valid = check_password_hash(user.password_hash, password)
+
+        # If the user does not exist or the password is invalid, render the login.html template with an error message and a 401 status code
+        if not user or not password_valid:
+            return render_template('login.html', error='Invalid username or password.'), 401
+
         return render_template('home.html', username = username)
     return render_template('login.html')
 
@@ -73,13 +84,16 @@ def register():
         username = request.form.get('username', '').strip()
         password = request.form.get('password', '')
 
-        # Input validation for username and password, renders register.html with a 409 error if empty or invalid
+        # Input validation for username and password, renders register.html with an error message if empty or invalid
         if not username or not password:
-            return render_template('register.html', error = 'Invalid username or password.'), 409
+            return render_template('register.html', error = 'Invalid username or password.'), 200
 
-        # Check if the username or password exceeds 16 characters, renders register.html with a 409 error if it does
-        if len(username) > 16 or len(password) > 16:
-            return render_template('register.html', error = 'Username or password cannot exceed 16 characters.'), 409
+        # Check if the username or password exceeds 16 or 32 characters, renders register.html with an error message if it does
+        if len(username) > 16:
+            return render_template('register.html', error = 'Username cannot exceed 16 characters.'), 200
+
+        if len(password) > 32:
+            return render_template('register.html', error = 'Password cannot exceed 32 characters.'), 200
 
         # Check if the username already exists in the database
         existing_user = database.session.scalar(
