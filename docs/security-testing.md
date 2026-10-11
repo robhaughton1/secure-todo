@@ -65,17 +65,17 @@ The malformed request was handled by the application's validation instead of bei
 
 **Status:** Control verified.
 
-> Development note: Flask debug mode can expose detailed tracebacks when an unhandled exception occurs. Debug mode is useful during local development but must not be enabled in production.
+> Development note: Flask debug mode can expose detailed tracebacks when an unhandled exception occurs, so debug mode will only be on in local development!
 
 ---
 
 ## 3. Username and Password Length Validation
 
 ### What I tested
-I modified the login request in Burp so the username or password exceeded the application's 16-character limit.
+I modified the login request in Burp so the username or password exceeded the application's 16 character limit
 
 ### Security reasoning
-The browser is controlled by the client, so input-length restrictions cannot rely only on the visible HTML form. The server should enforce the application's accepted input boundaries as well.
+The browser is controlled by the client, so input length restrictions cannot rely only on the visible HTML form. The server should enforce the application's accepted input boundaries as well.
 
 ### Server-side control
 
@@ -129,15 +129,15 @@ This test does not prove that the entire application is free of XSS. Output hand
 
 ## Current Testing Approach
 
-For security-sensitive features, the development process is:
+For security sensitive features, the development process is:
 
 1. Build the feature.
-2. Identify the trust boundary and user-controlled inputs.
+2. Identify the trust boundary and user controlled inputs.
 3. Test normal behavior in the browser.
-4. Use Burp Suite to modify requests and bypass client-side assumptions.
+4. Use Burp Suite to modify requests and bypass client side assumptions.
 5. Observe how the server handles malformed or unexpected input.
 6. Fix or strengthen the control when needed.
 7. Retest the same request to verify the behavior.
 8. Record meaningful findings and security decisions here.
 
-Minor programming mistakes and ordinary development errors do not need to be documented as security findings unless they reveal a meaningful security behavior or lead to a security control being added or verified.
+Minor programming mistakes and ordinary development errors will not be documented as security findings unless they reveal a meaningful security behavior or lead to a security control being added
