@@ -2,15 +2,19 @@
 <html lang="en">
     <head>  
         <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">  
-        <title>Login</title>  
+        <title>Fernward | Login</title>  
         <link rel="stylesheet" href="/static/css/style.css">
         <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
 
     </head>
     <body>  
+        <div class="brand">
+            <img src="{{ url_for('static', filename='images/fern.webp') }}" alt="" class="brandFern">
+            <h1>Fernward</h1>
+        </div>
         <div class="authContainer">
            
-                <h2>Login</h2>
+                <h2>Let's get back to those tasks.</h2>
              <form id="loginForm" class="authForm" method="post" action="/login">
                 {% if error %}
                     <p style="color: red;">{{ error }}</p>
