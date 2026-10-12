@@ -11,7 +11,7 @@ body {
     margin: 0;
     min-height: 100vh;
     padding: 0 16px 32px;
-    background-color: #F8F5F0;
+    background-color: #251e3a;
     font-family: 'Nunito', sans-serif;
 }
 
@@ -119,11 +119,14 @@ body {
     margin: 0 auto 40px;
     padding: 32px;
 
-    background-color: #76638F;
+    background-color: #321c4d;
     color: #F5F0FA;
 
     border-radius: 18px;
     box-shadow: 0 12px 32px rgba(65, 45, 83, 0.12);
+
+   box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.3);
+
 }
 
 .authContainer h2 {
@@ -182,9 +185,9 @@ body {
     gap: 12px;
 
     padding: 0 14px;
-    background-color: #FFFAF8;
+    background-color: #2d243f;
 
-    border: 2px solid transparent;
+    border: 2px solid #726888;
     border-radius: 12px;
 
     transition:
@@ -193,9 +196,9 @@ body {
 }
 
 .input-wrapper:focus-within {
-    background-color: #FFFFFF;
+    background-color: #473b63;
     border-color: #D6B4E9;
-    box-shadow: 0 0 0 3px rgba(190, 163, 220, 0.65);
+    box-shadow: 0 0 0 1px rgba(190, 163, 220, 0.65);
 }
 
 .input-wrapper img {
@@ -241,7 +244,7 @@ body {
     border: none;
     border-radius: 11px;
 
-    background-color: #241C38;
+    background-color: #1e1730;
     color: #FFFAF8;
 
     font-family: 'Nunito', sans-serif;
@@ -257,7 +260,7 @@ body {
 }
 
 .authButton:hover {
-    background-color: #392B53;
+    background-color: #5a487a;
     transform: translateY(-2px);
     box-shadow: 0 5px 12px rgba(32, 22, 49, 0.18);
 }
@@ -285,10 +288,10 @@ body {
     margin-bottom: 20px;
     padding: 12px 14px;
 
-    background-color: #FFF0F2;
-    color: #923E58;
+    background-color: #c2747e;
+    color: #e2cfd6;
 
-    border: 1px solid #E8A9BB;
+    border: 1px solid #962948;
     border-radius: 10px;
 
     font-size: 0.9rem;
