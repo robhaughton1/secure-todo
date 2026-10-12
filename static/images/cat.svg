@@ -1,0 +1,92 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="180"
+     height="210"
+     viewBox="0 0 180 210">
+
+    <!-- Tail -->
+    <path d="M125 158 Q175 155 157 110"
+          fill="none"
+          stroke="#C9A6AD"
+          stroke-width="15"
+          stroke-linecap="round"/>
+
+    <!-- Body -->
+    <ellipse cx="91" cy="157" rx="49" ry="45"
+             fill="#E7C9C4"
+             stroke="#6C566A"
+             stroke-width="2.5"/>
+
+    <!-- Ears -->
+    <path d="M48 73 L43 24 L81 51 Z"
+          fill="#E7C9C4"
+          stroke="#6C566A"
+          stroke-width="2.5"/>
+
+    <path d="M104 51 L139 24 L135 76 Z"
+          fill="#E7C9C4"
+          stroke="#6C566A"
+          stroke-width="2.5"/>
+
+    <!-- Inner ears -->
+    <path d="M53 63 L51 38 L70 55 Z" fill="#D69FA9"/>
+    <path d="M115 55 L131 38 L130 63 Z" fill="#D69FA9"/>
+
+    <!-- Head -->
+    <ellipse cx="91" cy="88" rx="51" ry="43"
+             fill="#E7C9C4"
+             stroke="#6C566A"
+             stroke-width="2.5"/>
+
+    <!-- Eyes -->
+    <path d="M66 86 Q73 79 80 86"
+          fill="none" stroke="#514657"
+          stroke-width="2.5" stroke-linecap="round"/>
+
+    <path d="M103 86 Q110 79 117 86"
+          fill="none" stroke="#514657"
+          stroke-width="2.5" stroke-linecap="round"/>
+
+    <!-- Nose and mouth -->
+    <path d="M87 97 L95 97 L91 102 Z" fill="#B7798F"/>
+
+    <path d="M91 102 Q85 110 80 105 M91 102 Q97 110 102 105"
+          fill="none" stroke="#514657"
+          stroke-width="1.8" stroke-linecap="round"/>
+
+    <!-- Whiskers -->
+    <path d="M60 99 L43 95 M60 105 L44 108
+             M122 99 L139 95 M122 105 L138 108"
+          fill="none" stroke="#6C566A"
+          stroke-width="1.5" stroke-linecap="round"/>
+
+    <!-- Checklist -->
+    <rect x="65" y="133" width="58" height="66" rx="5"
+          fill="#FFF9F0"
+          stroke="#6C566A"
+          stroke-width="2.5"/>
+
+    <rect x="84" y="128" width="20" height="9" rx="3"
+          fill="#91AD8E"/>
+
+    <g fill="none" stroke="#779B7C"
+       stroke-width="2.5" stroke-linecap="round"
+       stroke-linejoin="round">
+        <path d="M75 150 l4 4 6 -8"/>
+        <path d="M75 168 l4 4 6 -8"/>
+    </g>
+
+    <g stroke="#B9A9B5" stroke-width="2">
+        <path d="M92 151 H112"/>
+        <path d="M92 169 H112"/>
+        <path d="M75 185 H112"/>
+    </g>
+
+    <!-- Paws holding checklist -->
+    <ellipse cx="64" cy="158" rx="10" ry="13"
+             fill="#E7C9C4"
+             stroke="#6C566A" stroke-width="2"/>
+
+    <ellipse cx="124" cy="158" rx="10" ry="13"
+             fill="#E7C9C4"
+             stroke="#6C566A" stroke-width="2"/>
+</svg>
