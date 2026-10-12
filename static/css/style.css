@@ -163,6 +163,28 @@ body {
     border-radius: 2px;
 }
 
+.refreshButton{
+    margin-left: 20%;
+    margin-right: 20%;
+    display: flex;
+    justify-content: center;
+    text-decoration: none;
+    color: #F5F0FA;
+    background-color: #1a0733;
+    border-radius: 10px;
+    padding: 3%;
+    transition:
+        background-color 0.2s ease,
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+.refreshButton:hover{
+    background-color: #361561;
+    transition: 0.3s ease;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 12px rgba(32, 22, 49, 0.18);
+}
+.refreshButton
 
 /* ========================================
    FORM FIELDS
