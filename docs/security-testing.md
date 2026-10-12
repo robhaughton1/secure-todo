@@ -219,7 +219,17 @@ Someone who already obtained a valid, unexpired session cookie could potentially
 - Burp Suite Repeater: replay of the earlier valid cookie to `GET /dashboard`, receiving `200 OK` and dashboard HTML.
 - Burp Suite: modified/invalid cookie rejected with a redirect to login (separate control verification).
 
-Screenshots can be added under `docs/evidence/` and linked here after upload. Capture the logout response and subsequent replay together if possible to make the event ordering independently verifiable.
+#### Screenshots
+
+**Burp interception during the session test:**
+
+![Burp interception showing dashboard request and captured session cookie](evidence/Screenshot%202026-10-12%20174309.png)
+
+**Replayed cookie accepted by the dashboard:**
+
+![Burp Repeater GET dashboard with session cookie returning HTTP 200 and dashboard HTML](evidence/image%2820261012-214611%29.png)
+
+The Repeater screenshot demonstrates that the supplied cookie was accepted. The logout-then-replay ordering was observed during manual testing; capture both requests in one sequence if independently verifiable evidence is needed.
 
 ### Planned remediation
 Consider server-side session records with revocable opaque session identifiers, or a server-validated session identifier/version that can be invalidated on logout. Require authentication checks to consult revocation state. Retest that a cookie captured before logout no longer grants dashboard access afterward, while a newly authenticated session still works.
