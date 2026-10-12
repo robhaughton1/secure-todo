@@ -195,6 +195,39 @@ The previous large and reliable timing difference was no longer present in the r
 
 ---
 
+## 6. Previously Issued Session Cookie Remains Valid After Logout
+
+### What I tested
+I authenticated to the local Fernward application using a test account, captured a valid Flask `session` cookie in Burp Suite, logged out using `POST /logout`, and replayed the previously captured cookie in a `GET /dashboard` request using Burp Repeater.
+
+### Expected behavior
+If logout is intended to immediately revoke the current authentication credential, replaying a cookie issued before logout should not restore access to a protected endpoint.
+
+### Observed behavior
+The normal logout response instructed the browser to delete the session cookie, including an expiration date of `Thu, 01 Jan 1970 00:00:00 GMT`. However, replaying the previously issued, unmodified signed cookie after logout returned `HTTP/1.1 200 OK` and the dashboard HTML. The expired `Set-Cookie` directive removes the browser's copy but does not revoke a captured copy on the server.
+
+A separate tampering test changed the encoded user ID without generating a valid signature. Flask rejected that modified cookie, and the dashboard request redirected to login. **That is expected secure behavior, not a signature bypass.**
+
+### Root cause
+Fernward currently uses Flask's default client-side, cryptographically signed sessions. The server can verify the cookie's signature and age, but it does not maintain an individual server-side session record to revoke when the user logs out. `session.clear()` causes the browser to discard its cookie; it does not invalidate other copies of the previously signed cookie.
+
+### Security impact and scope
+Someone who already obtained a valid, unexpired session cookie could potentially replay it after the legitimate user logs out. This finding **does not** show that an attacker can forge a signed cookie, guess the secret key, or access another account without first obtaining a valid credential. Testing was performed on local development accounts.
+
+### Evidence
+- Burp Suite: `POST /logout` response clearing the browser cookie (observed during testing).
+- Burp Suite Repeater: replay of the earlier valid cookie to `GET /dashboard`, receiving `200 OK` and dashboard HTML.
+- Burp Suite: modified/invalid cookie rejected with a redirect to login (separate control verification).
+
+Screenshots can be added under `docs/evidence/` and linked here after upload. Capture the logout response and subsequent replay together if possible to make the event ordering independently verifiable.
+
+### Planned remediation
+Consider server-side session records with revocable opaque session identifiers, or a server-validated session identifier/version that can be invalidated on logout. Require authentication checks to consult revocation state. Retest that a cookie captured before logout no longer grants dashboard access afterward, while a newly authenticated session still works.
+
+**Status:** Confirmed local session-replay behavior; remediation pending.
+
+---
+
 ## Current Testing Approach
 
 For security sensitive features, the development process is:
