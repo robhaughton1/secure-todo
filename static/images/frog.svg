@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="180"
+     height="210"
+     viewBox="0 0 180 210">
+
+    <!-- Back legs -->
+    <ellipse cx="49" cy="173" rx="23" ry="17"
+             fill="#A8BE9C" stroke="#607568" stroke-width="2.5"/>
+    <ellipse cx="131" cy="173" rx="23" ry="17"
+             fill="#A8BE9C" stroke="#607568" stroke-width="2.5"/>
+
+    <!-- Body -->
+    <ellipse cx="90" cy="153" rx="48" ry="47"
+             fill="#A8BE9C" stroke="#607568" stroke-width="2.5"/>
+
+    <!-- Eye bumps -->
+    <circle cx="57" cy="63" r="21"
+            fill="#A8BE9C" stroke="#607568" stroke-width="2.5"/>
+    <circle cx="123" cy="63" r="21"
+            fill="#A8BE9C" stroke="#607568" stroke-width="2.5"/>
+
+    <!-- Head -->
+    <ellipse cx="90" cy="94" rx="61" ry="47"
+             fill="#A8BE9C" stroke="#607568" stroke-width="2.5"/>
+
+    <!-- Eyes -->
+    <circle cx="58" cy="70" r="5" fill="#354C40"/>
+    <circle cx="122" cy="70" r="5" fill="#354C40"/>
+
+    <!-- Cheeks -->
+    <ellipse cx="49" cy="105" rx="10" ry="5"
+             fill="#DDA9B0" opacity="0.7"/>
+    <ellipse cx="131" cy="105" rx="10" ry="5"
+             fill="#DDA9B0" opacity="0.7"/>
+
+    <!-- Smile -->
+    <path d="M76 104 Q90 116 104 104"
+          fill="none" stroke="#52695B"
+          stroke-width="2.5" stroke-linecap="round"/>
+
+    <!-- Notebook -->
+    <rect x="62" y="131" width="57" height="65" rx="5"
+          fill="#FFF9F0" stroke="#607568" stroke-width="2.5"/>
+
+    <!-- Notebook binding -->
+    <path d="M73 132 V195"
+          stroke="#B5A5C8" stroke-width="3"/>
+
+    <!-- Notebook lines -->
+    <g stroke="#B5A5C8" stroke-width="2"
+       stroke-linecap="round">
+        <path d="M83 149 H108"/>
+        <path d="M83 163 H108"/>
+        <path d="M83 177 H103"/>
+    </g>
+
+    <!-- Little leaf on notebook -->
+    <path d="M101 139 Q111 130 114 139 Q108 147 101 139"
+          fill="#91AD8E"/>
+
+    <!-- Hands holding notebook -->
+    <ellipse cx="61" cy="158" rx="11" ry="13"
+             fill="#A8BE9C" stroke="#607568" stroke-width="2"/>
+    <ellipse cx="120" cy="158" rx="11" ry="13"
+             fill="#A8BE9C" stroke="#607568" stroke-width="2"/>
+
+    <!-- Feet -->
+    <ellipse cx="65" cy="195" rx="17" ry="8"
+             fill="#A8BE9C" stroke="#607568" stroke-width="2"/>
+    <ellipse cx="115" cy="195" rx="17" ry="8"
+             fill="#A8BE9C" stroke="#607568" stroke-width="2"/>
+
+</svg>

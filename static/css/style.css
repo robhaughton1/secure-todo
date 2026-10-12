@@ -1,120 +1,402 @@
-body{
-    margin: 0%;
-    background-color: 		#100b1f;
+
+/* ========================================
+   FERNWARD - GLOBAL STYLES
+======================================== */
+
+* {
+    box-sizing: border-box;
 }
-.header{
-    margin: 0%;
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    padding: 0 16px 32px;
+    background-color: #F8F5F0;
+    font-family: 'Nunito', sans-serif;
+}
+
+
+/* ========================================
+   ORIGINAL TODO APP STYLES
+   (Preserved for future development)
+======================================== */
+
+.header {
+    margin: 0;
     width: 100%;
     display: flex;
     justify-content: center;
-    background-color: 	#1a0733;
+    background-color: #1a0733;
     color: rgb(144, 120, 201);
     padding: 5px;
     font-family: 'Poppins', sans-serif;
     font-size: 2.5rem;
 }
-.container{
-    margin: 7%;
-    margin-top: 0%;
+
+.container {
+    margin: 0 7% 7%;
     display: block;
-    justify-content: center;
-    background-color: 	#421fcf;
+    background-color: #421fcf;
     color: rgb(224, 225, 231);
     padding: 1px;
     font-family: 'Poppins', sans-serif;
     font-size: 2.5rem;
-    
 }
-.todos{
-    margin-top: 1rem;
-    margin-left: 10%;
-    margin-right: 10%;
-    margin-bottom: 0%;
+
+.todos {
+    margin: 1rem 10% 0;
     display: flex;
     justify-content: center;
     background-color: #2D1B4E;
     color: rgb(224, 225, 231);
     padding: 1px;
     font-family: 'Poppins', sans-serif;
-    font-size: 2.5rem;   
+    font-size: 2.5rem;
 }
-.todo{
+
+.todo {
     display: flex;
     justify-content: center;
-    background-color:	#0b0816;
+    background-color: #0b0816;
     color: rgb(102, 90, 206);
     margin: 1px;
     padding: 1em;
 }
-.appContainer{
+
+.appContainer {
     display: none;
 }
 
-.authContainer{
-    background-color: #100c16;
-    outline: 3px solid #6D4AFF;
-    
-    outline-offset: 2px;
-    color: rgb(224, 225, 231);
-    font-family: 'Poppins', sans-serif;
-    margin: 10%;
-    padding: 4%;
-    box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.5);
 
-}
-.authContainer h2{
-    padding: 2%;
-    font-size: 3rem;
+/* ========================================
+   FERNWARD BRANDING
+======================================== */
+
+.brand {
     display: flex;
     justify-content: center;
+    width: 100%;
+    padding: 30px 0 10px;
 }
-.authForm{
-    display:block;
+
+.brand-logo {
+    width: 320px;
+    text-align: center;
+}
+
+.brand-logo h1 {
+    margin: 0;
+    font-family: 'Fredoka', sans-serif;
+    font-size: 2.8rem;
+    font-weight: 400;
+    line-height: 1.2;
+    color: #8E70B3;
+}
+
+.floral-wreath {
+    display: block;
+    width: 100%;
+    height: auto;
+    margin-top: -55px;
 }
 
 
-.authButtonDiv{
+/* ========================================
+   LOGIN LAYOUT
+======================================== */
+
+.auth-scene {
+    position: relative;
+    width: min(760px, 100%);
+    margin: 0 auto;
+}
+
+.authContainer {
+    position: relative;
+    z-index: 1;
+
+    width: min(420px, 90%);
+    margin: 0 auto 40px;
+    padding: 32px;
+
+    background-color: #76638F;
+    color: #F5F0FA;
+
+    border-radius: 18px;
+    box-shadow: 0 12px 32px rgba(65, 45, 83, 0.12);
+}
+
+.authContainer h2 {
+    font-size: 1.3rem;
+    font-weight: 600;
+    text-align: center;
+    line-height: 1.4;
+    margin: 0 0 28px;
+    padding: 0;
+}
+
+.authForm {
+    display: block;
+}
+
+.auth-switch {
+    margin: 22px 0 0;
+    text-align: center;
+    font-size: 0.9rem;
+    color: #F5F0FA;
+}
+
+.auth-switch a {
+    color: #FFF0D9;
+    font-weight: 700;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.auth-switch a:hover {
+    color: #FFFFFF;
+}
+
+.auth-switch a:focus-visible {
+    outline: 2px solid #FFFFFF;
+    outline-offset: 4px;
+    border-radius: 2px;
+}
+
+
+/* ========================================
+   FORM FIELDS
+======================================== */
+
+.usernameContainer,
+.passwordContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.input-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    padding: 0 14px;
+    background-color: #FFFAF8;
+
+    border: 2px solid transparent;
+    border-radius: 12px;
+
+    transition:
+        box-shadow 0.2s ease,
+        background-color 0.2s ease;
+}
+
+.input-wrapper:focus-within {
+    background-color: #FFFFFF;
+    border-color: #D6B4E9;
+    box-shadow: 0 0 0 3px rgba(190, 163, 220, 0.65);
+}
+
+.input-wrapper img {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+}
+
+.input-wrapper input {
+    width: 100%;
+    min-width: 0;
+    height: 48px;
+
+    border: none;
+    outline: none;
+    background: transparent;
+
+    font-family: 'Nunito', sans-serif;
+    font-size: 1rem;
+    color: #2D2340;
+}
+
+.input-wrapper input::placeholder {
+    color: #8E829B;
+}
+
+
+/* ========================================
+   LOGIN BUTTON
+======================================== */
+
+.authButtonDiv {
     display: flex;
     justify-content: center;
     margin-top: 5%;
-    height: 2.5rem;
-    
 }
-.authButton{
-    background-color: #201a35;
-    width: 10rem;
-    color: aliceblue;
-    border: none;
-    outline: 3px solid #251f3d;
-}
-.authButton:hover{
-    transform: scale(1.1);
-    background-color: #322a4e;
-    transition: 0.3s ease;
-}
-.authButton:not(:hover){
-    transform: scale(1);
-    background-color: #201a35;
-    transition: 0.3s ease;
 
+.authButton {
+    width: 100%;
+    min-height: 52px;
+    padding: 14px 16px;
+
+    border: none;
+    border-radius: 11px;
+
+    background-color: #241C38;
+    color: #FFFAF8;
+
+    font-family: 'Nunito', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        background-color 0.2s ease,
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
 }
-.authButton:active{
-    
-   background-color: #322a4e;
+
+.authButton:hover {
+    background-color: #392B53;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 12px rgba(32, 22, 49, 0.18);
 }
-.usernameContainer{
-    display: grid;
-    justify-content: center;
+
+.authButton:active {
+    transform: translateY(0);
+    box-shadow: none;
 }
-.usernameContainer div{
+
+.authButton:focus-visible {
+    outline: 3px solid #E6C7F2;
+    outline-offset: 3px;
+}
+
+
+/* ========================================
+   LOGIN ERROR MESSAGE
+======================================== */
+
+.auth-error {
     display: flex;
-    justify-content: center;
+    align-items: center;
+    gap: 10px;
+
+    margin-bottom: 20px;
+    padding: 12px 14px;
+
+    background-color: #FFF0F2;
+    color: #923E58;
+
+    border: 1px solid #E8A9BB;
+    border-radius: 10px;
+
+    font-size: 0.9rem;
+    line-height: 1.4;
+    overflow-wrap: anywhere;
 }
-.passwordContainer{
-    display: grid;
-    justify-content: center;
-}
-.passwordContainer div{
+
+.error-icon {
     display: flex;
+    align-items: center;
     justify-content: center;
+    flex-shrink: 0;
+
+    width: 22px;
+    height: 22px;
+
+    border-radius: 50%;
+    background-color: #923E58;
+    color: white;
+
+    font-weight: 700;
+}
+
+
+/* ========================================
+   MASCOTS
+======================================== */
+
+.auth-mascot {
+    position: absolute;
+    width: 145px;
+    height: auto;
+    z-index: 2;
+
+    pointer-events: none;
+    user-select: none;
+}
+
+/* Cat: gentle sway */
+.auth-mascot-left {
+    left: 55px;
+    bottom: 37px;
+
+    transform-origin: center bottom;
+    animation: catSway 4s ease-in-out infinite;
+}
+
+/* Frog: gentle bob */
+.auth-mascot-right {
+    right: 55px;
+    bottom: 42px;
+
+    transform-origin: center bottom;
+    animation: frogBob 3.5s ease-in-out infinite;
+}
+
+@keyframes catSway {
+    0%, 100% {
+        transform: rotate(-5deg);
+    }
+
+    50% {
+        transform: rotate(1deg);
+    }
+}
+
+@keyframes frogBob {
+    0%, 100% {
+        transform: translateY(0) rotate(5deg);
+    }
+
+    50% {
+        transform: translateY(-7px) rotate(3deg);
+    }
+}
+
+
+/* ========================================
+   RESPONSIVE DESIGN
+======================================== */
+
+@media (max-width: 650px) {
+    .auth-mascot {
+        display: none;
+    }
+
+    .authContainer {
+        width: min(420px, 100%);
+    }
+
+    .brand-logo {
+        width: min(320px, 100%);
+    }
+}
+
+
+/* ========================================
+   ACCESSIBILITY
+======================================== */
+
+@media (prefers-reduced-motion: reduce) {
+    .auth-mascot-left,
+    .auth-mascot-right {
+        animation: none;
+    }
+
+    .authButton,
+    .input-wrapper {
+        transition: none;
+    }
 }

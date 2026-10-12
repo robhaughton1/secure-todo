@@ -1,34 +1,129 @@
+
 <!DOCTYPE html>
 <html lang="en">
-    <head>  
-        <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">  
-        <title>Register</title>  
-        <link rel="stylesheet" href="/static/css/style.css">
-        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
 
-    </head>
-    <body>  
-        <div class="authContainer">
-           
-                <h2>Register</h2>
-             <form id="registerForm" class="authForm" method="post" action="/register">
-                {% if error %}
-                    <p style="color: red;">{{ error }}</p>
-                {% endif %}
-                <div class="usernameContainer">
-                    <div>Username</div>
-                    <input type="text" name="username">
-                </div>
-            
-                <div class="passwordContainer">
-                    <div>Password</div>
-                    <input type="password" name="password">
-                </div>
+    <title>Fernward | Register</title>
 
-                <div class="authButtonDiv">
-                    <button type="submit" id="registerButton" class="authButton">Register</button>
-                </div>
-             </form>
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600&family=Nunito:wght@400;500;600&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+
+    <!-- Fernward branding -->
+    <div class="brand">
+        <div class="brand-logo">
+            <h1>Fernward</h1>
+            <img
+                src="{{ url_for('static', filename='images/floral-wreath.svg') }}"
+                alt=""
+                class="floral-wreath">
         </div>
-    </body>
-</html>  
+    </div>
+
+    <!-- Registration scene -->
+    <div class="auth-scene">
+
+        <!-- Cat mascot -->
+        <img
+            src="{{ url_for('static', filename='images/cat.svg') }}"
+            class="auth-mascot auth-mascot-left"
+            alt=""
+            aria-hidden="true">
+
+        <!-- Frog mascot -->
+        <img
+            src="{{ url_for('static', filename='images/frog.svg') }}"
+            class="auth-mascot auth-mascot-right"
+            alt=""
+            aria-hidden="true">
+
+        <!-- Registration card -->
+        <div class="authContainer">
+
+            <h2>Let's grow something good.</h2>
+
+            <form
+                id="registerForm"
+                class="authForm"
+                method="post"
+                action="/register">
+
+                <!-- Registration errors -->
+                {% if error %}
+                    <div class="auth-error" role="alert">
+                        <span class="error-icon" aria-hidden="true">!</span>
+                        <span>{{ error }}</span>
+                    </div>
+                {% endif %}
+
+                <!-- Username -->
+                <div class="usernameContainer">
+                    <label for="username">Username</label>
+
+                    <div class="input-wrapper">
+                        <img
+                            src="{{ url_for('static', filename='images/user.svg') }}"
+                            alt=""
+                            aria-hidden="true">
+
+                        <input
+                            type="text"
+                            id="username"
+                            name="username"
+                            placeholder="Choose a username"
+                            autocomplete="username"
+                            required>
+                    </div>
+                </div>
+
+                <!-- Password -->
+                <div class="passwordContainer">
+                    <label for="password">Password</label>
+
+                    <div class="input-wrapper">
+                        <img
+                            src="{{ url_for('static', filename='images/lock.svg') }}"
+                            alt=""
+                            aria-hidden="true">
+
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            placeholder="Create a password"
+                            autocomplete="new-password"
+                            required>
+                    </div>
+                </div>
+
+                <!-- Submit -->
+                <div class="authButtonDiv">
+                    <button
+                        type="submit"
+                        id="registerButton"
+                        class="authButton">
+                        Create account
+                    </button>
+                </div>
+
+                <!-- Return to login -->
+                <p class="auth-switch">
+                    Already have an account?
+                    <a href="{{ url_for('login') }}">Log in</a>
+                </p>
+
+            </form>
+        </div>
+    </div>
+
+</body>
+</html>
