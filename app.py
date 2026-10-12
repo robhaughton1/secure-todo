@@ -84,11 +84,11 @@ def register():
         username = request.form.get('username', '').strip()
         password = request.form.get('password', '')
 
-        # Input validation for username and password, renders register.html with a 409 error if empty or invalid
+        # Input validation for username and password, renders register.html with an error message if empty or invalid
         if not username or not password:
             return render_template('register.html', error = 'Invalid username or password.'), 200
 
-        # Check if the username or password exceeds 16 or 32 characters, renders register.html with a 409 error if it does
+        # Check if the username or password exceeds 16 or 32 characters, renders register.html with an error message if it does
         if len(username) > 16:
             return render_template('register.html', error = 'Username cannot exceed 16 characters.'), 200
 
