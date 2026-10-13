@@ -95,3 +95,12 @@ Modified: `docs/frontend-design.md`; `static/css/style.css`; `static/images/fern
 Created: `static/css/cozy.css`; `static/images/fernward-fox-curious.svg`; `static/images/fernward-fox-cheerful.svg`; `static/images/fernward-fox-resting.svg`; `static/images/fernward-fox-celebrating.svg`; `static/images/fern-sprig.svg`; `static/images/fern-growth.svg`; `templates/partials/journal-empty.html`; `templates/partials/completion-feedback.html`; `templates/partials/design-sketchbook.html`.
 
 The original PR also adds `templates/base.html`, `templates/auth.html`, shared brand/aurora/navigation/theme/icon/task-card partials, `static/js/theme.js`, the base fox and the brand mark. PR #7 remains the review location; it must remain unmerged.
+# Targeted UI refinement
+
+The landing hero now gives the fox and notebook more presence, keeps the full woodland backdrop and moving overlapping aurora waves, and explains that organizing tasks is coming soon. The dashboard welcome area and companion are more compact; the task heading, disabled Add Task action, search, and filters take priority.
+
+Login and registration share an original SVG warning icon and muted rose alert styling. Server messages remain escaped and unchanged. Inline required-field feedback only presents the browser's existing native required errors; normal POST submissions, native constraints, conditional Turnstile, and server validation remain authoritative.
+
+Presentation JavaScript is organized into theme-controls, navigation, auth-forms, companion, and design-previews modules, with interface.js as their entry point. No authentication, CAPTCHA verification, session handling, task persistence, network requests, or unsafe HTML insertion were added. Companion responses are user-triggered; animation respects reduced motion. Design specimens remain explicitly labeled frontend-only examples.
+
+Validation: all five pages checked at 375, 768, 1024, and 1440 pixels in both themes (40 combinations), with no horizontal overflow or broken images. Empty form submission retains native blocking, displays both required messages, focuses the first field, and clears the username message when filled. Mobile menu opening/Escape and companion responses checked. Template rendering checks cover POST actions, field names, conditional Turnstile, escaping, logout, and reusable task-card escaping. Live authentication and CAPTCHA verification require the owner's configured Flask services and were not exercised by the static preview.

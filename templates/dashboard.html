@@ -30,13 +30,13 @@
         {% include 'partials/aurora.html' %}
         <img class="woodland-view" src="{{ url_for('static', filename='images/woodland-clearing.svg') }}" width="900" height="360" alt="" aria-hidden="true">
         <div class="journal-sky-copy"><div class="page-heading"><div><p class="handwritten">A little clearing, just for you.</p><h1>Your journal</h1></div><time data-current-date></time></div>
-        <section class="journal-welcome" aria-labelledby="welcome-title"><div><h2 id="welcome-title">Glad you’re here, {{ username }}.</h2><p>Settle into your nook. There’s room for small plans and unhurried beginnings.</p></div></section></div>
+        <section class="journal-welcome" aria-labelledby="welcome-title"><div><h2 id="welcome-title">Glad you’re here, {{ username }}.</h2></div></section></div>
       </div>
       <div class="journal-grid">
         <section class="task-workspace notebook" aria-labelledby="tasks-title">
           <div class="notebook-binding" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
-          <div class="task-section-heading"><div><p class="specimen-label">A PAGE FOR TODAY</p><h2 id="tasks-title">Your tasks <span class="soon-badge">Coming soon</span></h2><p>Somewhere to put what’s on your mind.</p></div><button class="button button-small" disabled aria-describedby="task-availability">＋ Add task</button></div>
-          <p id="task-availability" class="availability-note">Task management is still being built. Adding, searching and filtering tasks will become available when it’s ready.</p>
+          <div class="task-section-heading"><div><p class="specimen-label">A PAGE FOR TODAY</p><h2 id="tasks-title">Your tasks <span class="soon-badge">Coming soon</span></h2></div><button class="button button-small" disabled aria-describedby="task-availability">＋ Add task</button></div>
+          <p id="task-availability" class="availability-note">Task controls will be available when task management launches.</p>
           <div class="task-toolbar"><div class="search-field"><label class="sr-only" for="task-search">Search tasks (coming soon)</label><span aria-hidden="true">⌕</span><input id="task-search" type="search" placeholder="Search tasks" disabled></div><label class="filter-label">Status <select disabled><option>All statuses</option><option>Pending</option><option>Completed</option></select></label><label class="filter-label">Priority <select disabled><option>All priorities</option><option>High</option><option>Medium</option><option>Low</option></select></label></div>
           {% include 'partials/journal-empty.html' %}
           <div class="notebook-footer"><span aria-hidden="true">✧</span> A fresh page, whenever you need one.</div>

@@ -1,0 +1,15 @@
+{% from 'partials/icons.html' import icon %}
+
+{% macro auth_alert(message) -%}
+<div class="auth-error" id="form-error" role="alert">
+  {{ icon('warning') }}
+  <span class="auth-error-message">{{ message }}</span>
+</div>
+{%- endmacro %}
+
+{% macro field_error(field_id) -%}
+<p class="field-error" id="{{ field_id }}-required" hidden>
+  {{ icon('warning') }}
+  <span data-field-error-text></span>
+</p>
+{%- endmacro %}

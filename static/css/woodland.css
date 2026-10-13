@@ -1,8 +1,8 @@
 /* Visible blue-violet aurora and layered woodland scenery around quiet paper. */
-:root { --woodland-wash: #e2eadb; --forest-ink: #315e40; --fern-wash: #ceddc3; }
-:root[data-theme=dark] { --woodland-wash: #303a2b; --forest-ink: #c2d9ac; --fern-wash: #394932; }
+:root { --woodland-wash: #e2eadb; --forest-ink: #315e40; --fern-wash: #ceddc3; --error: #8c3949; --error-bg: #f8e9e9; --error-line: #dbb4b8; }
+:root[data-theme=dark] { --woodland-wash: #303a2b; --forest-ink: #c2d9ac; --fern-wash: #394932; --error: #e8bac1; --error-bg: #443136; --error-line: #76505b; }
 @media (prefers-color-scheme: dark) {
-  :root:not([data-theme]) { --woodland-wash: #303a2b; --forest-ink: #c2d9ac; --fern-wash: #394932; }
+  :root:not([data-theme]) { --woodland-wash: #303a2b; --forest-ink: #c2d9ac; --fern-wash: #394932; --error: #e8bac1; --error-bg: #443136; --error-line: #76505b; }
 }
 .aurora { opacity: 1; background: #d1d8ec; }
 .aurora span { opacity: .8; filter: blur(55px); }
@@ -37,7 +37,15 @@
 .landing-atmosphere .aurora { opacity: .76; }
 .landing-atmosphere { overflow: hidden; }
 .landing-woodland { position: absolute; left: 0; right: 0; bottom: 0; width: 100%; max-width: none; height: clamp(200px, 28vw, 370px); opacity: .35; -webkit-mask-image: linear-gradient(transparent, #000 24%); mask-image: linear-gradient(transparent, #000 24%); }
-.field-error { margin-top: 8px; font-size: 13px; line-height: 1.6; color: var(--error); }
+.auth-error, .field-error { display: flex; align-items: flex-start; color: var(--error); background: var(--error-bg); border: 1px solid var(--error-line); }
+.auth-error { padding: 14px 16px; gap: 12px; border-radius: 14px; }
+.auth-error .icon { flex: 0 0 20px; margin-top: 2px; }
+.auth-error-message { min-width: 0; font-size: 14px; line-height: 1.65; overflow-wrap: anywhere; }
+.field-error { margin-top: 8px; padding: 9px 11px; gap: 8px; border-radius: 10px; font-size: 13px; line-height: 1.6; }
+.field-error .icon { flex: 0 0 16px; width: 16px; height: 16px; margin-top: 2px; }
+.field-error [data-field-error-text] { min-width: 0; overflow-wrap: anywhere; }
+.field-error:not([hidden]) { animation: field-message-arrival .2s ease-out; }
+@keyframes field-message-arrival { from { transform: translateY(-3px); } to { transform: translateY(0); } }
 .form-field input[aria-invalid="true"] { border-color: var(--error); box-shadow: 0 0 0 2px var(--error-bg); }
 .form-field input[aria-invalid="true"]:focus { box-shadow: 0 0 0 3px var(--error-bg); }
 .landing-page .public-header { background: linear-gradient(var(--paper),transparent); }
@@ -47,6 +55,13 @@
 .hero-copy > .eyebrow { color: var(--text); }
 .landing-footer { position: relative; color: var(--text); }
 .landing-footer a { display: inline-flex; align-items: center; min-height: 44px; }
+/* Give the existing hero artwork more presence without adding another card. */
+.landing-page .hero { grid-template-columns: 1fr 1.05fr; gap: 28px; }
+.landing-page .hero-scene { min-height: 460px; }
+.landing-page .hero-fox { width: 94%; max-width: 470px; margin-top: 0; }
+.landing-page .scene-orbit { width: 82%; height: 350px; left: 10%; top: 28px; }
+.landing-page .scene-label { top: 0; left: 2%; }
+.landing-page .scene-caption { bottom: 0; right: 0; }
 .auth-art > .aurora { opacity: .9; }
 .auth-art-copy { background: var(--paper); border: 1px solid var(--line); border-radius: 18px 22px 18px 7px; padding: 20px 24px; margin-top: 35px; position: relative; z-index: 3; box-shadow: 0 8px 20px #3b4e3510; }
 .auth-art-copy h2 { font-size: 39px; }
@@ -81,29 +96,89 @@
 .fern-note { border-color: #8ba08090; background: linear-gradient(130deg,var(--paper),var(--woodland-wash)); }
 .paper-slip { background: var(--fern-wash); color: var(--forest-ink); }
 .notebook-footer { background: linear-gradient(90deg,var(--woodland-wash),var(--paper)); border-radius: 0 0 23px 7px; }
+/* The forest is a compact header; the notebook remains the workspace. */
+.journal-main { padding-top: 24px; }
+.journal-sky { min-height: 178px; margin-bottom: 24px; }
+.journal-sky-copy { padding: 20px 28px; }
+.journal-sky .page-heading { margin-bottom: 12px; }
+.journal-sky .page-heading h1 { font-size: 35px; }
+.journal-sky .journal-welcome h2 { font-size: 15px; }
+.journal-sky .woodland-view { height: 120px; }
+.notebook .task-section-heading { display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 12px; padding: 22px 24px 13px 30px; align-items: center; }
+.notebook .task-section-heading h2 { margin-top: 6px; font-size: 25px; }
+.notebook .task-section-heading .button { align-self: center; }
+.notebook .availability-note { padding: 0 24px 14px 30px; font-size: 11px; }
+.notebook .task-toolbar { display: grid; grid-template-columns: minmax(150px,1fr) auto auto; gap: 12px; padding: 14px 24px 14px 30px; align-items: end; }
+.notebook .search-field { width: 100%; }
+.notebook .filter-label { display: flex; flex-direction: column; align-items: flex-start; gap: 5px; }
+.notebook .filter-label select { width: 100%; margin: 0; }
+.journal-empty { padding-top: 16px; padding-bottom: 28px; }
+.empty-stationery { height: 165px; width: 250px; }
+.empty-stationery img { width: 195px; }
+.journal-empty h3 { font-size: 27px; }
+.companion-card { padding: 22px 15px 15px; }
+.companion-card h2 { font-size: 21px; }
+.companion-card img { width: 175px; height: 160px; }
+.companion-message { font-size: 16px; min-height: 52px; }
+.fern-note { padding: 13px; }
+.fern-note img { width: 150px; }
+.sidebar.is-open { overflow-y: auto; min-height: 0; max-height: calc(100dvh - 76px); }
 @media (max-width: 1100px) {
   .auth-fox { bottom: 56px; }
   .journal-sky-copy { width: 76%; }
   .journal-sky .page-heading time { top: 16px; right: 16px; font-size: 10px; }
   .journal-sky .page-heading .handwritten { margin-top: 20px; }
+  .landing-page .hero-fox { max-width: 420px; }
+  .notebook .task-toolbar { grid-template-columns: minmax(0,1fr) minmax(0,1fr); }
+  .notebook .search-field { grid-column: 1 / -1; }
+  .journal-sky .page-heading .handwritten { margin-top: 10px; }
 }
 @media (max-width: 900px) {
   .art-checklist { bottom: 230px; }
   .auth-art-copy { padding: 18px; }
   .auth-art-copy h2 { font-size: 30px; }
   .auth-art-copy p { font-size: 13px; }
+  .landing-page .hero-scene { min-height: 400px; }
+  .landing-page .scene-orbit { height: 300px; width: 86%; left: 8%; }
+  .landing-page .scene-caption strong { font-size: 13px; }
 }
 @media (max-width: 650px) {
-  .journal-sky { min-height: 300px; margin-bottom: 25px; }
-  .journal-sky-copy { padding: 24px 20px 55px; width: 100%; }
-  .journal-sky .page-heading .handwritten { margin-top: 22px; font-size: 14px; }
-  .journal-sky .page-heading h1 { font-size: 34px; }
+  .journal-sky { min-height: 202px; margin-bottom: 22px; }
+  .journal-sky-copy { padding: 22px 20px 36px; width: 100%; }
+  .journal-sky .page-heading .handwritten { margin-top: 20px; font-size: 13px; }
+  .journal-sky .page-heading h1 { font-size: 31px; }
   .journal-sky .page-heading time { top: 12px; right: 16px; padding: 5px 8px; font-size: 10px; }
   .journal-sky .journal-welcome p { font-size: 13px; max-width: 240px; }
   .journal-sky:after { background: linear-gradient(150deg,var(--paper) 0%,var(--paper) 35%,transparent 95%); }
   .woodland-view { width: 115%; height: 145px; right: -18%; opacity: .85; }
   .landing-woodland { width: 100%; height: 210px; left: 0; right: 0; opacity: .3; }
   .landing-page .hero-copy { background: linear-gradient(90deg,var(--paper),transparent); padding: 20px 15px; border-radius: 18px; }
+  .landing-page .hero { grid-template-columns: minmax(0,1fr); gap: 12px; }
+  .landing-page .hero-scene { min-height: 335px; margin-top: 0; }
+  .landing-page .hero-fox { width: 90%; max-width: 320px; margin-top: 8px; }
+  .landing-page .scene-orbit { height: 265px; width: 82%; top: 28px; left: 12%; }
+  .landing-page .scene-label { font-size: 10px; padding: 10px 12px; }
+  .landing-page .scene-caption { padding: 10px 13px; bottom: 0; }
+  .landing-page .scene-caption strong { font-size: 12px; }
+  .journal-sky .woodland-view { height: 105px; }
+  .notebook .task-section-heading { padding: 20px 16px 12px 23px; gap: 10px; }
+  .notebook .task-section-heading h2 { font-size: 23px; }
+  .notebook .availability-note { padding: 0 16px 13px 23px; font-size: 11px; }
+  .notebook .task-toolbar { padding: 13px 16px 13px 23px; gap: 10px; }
+  .journal-empty { padding: 14px 17px 24px 23px; }
+  .empty-stationery { height: 155px; width: 230px; }
+  .empty-stationery img { width: 180px; }
+  .paper-slip { font-size: 12px; padding: 12px; }
+  .companion-card { display: grid; grid-template-columns: 108px minmax(0,1fr); column-gap: 14px; padding: 23px 17px 17px; text-align: left; }
+  .companion-card > .specimen-label, .companion-card h2 { grid-column: 2; }
+  .companion-card h2 { font-size: 20px; margin: 5px 0 8px; }
+  .companion-card img { grid-column: 1; grid-row: 1 / 5; width: 108px; height: 112px; align-self: center; }
+  .companion-message, .companion-thought { grid-column: 2; }
+  .companion-message { font-size: 15px; margin: 0; min-height: 0; }
+  .companion-thought { text-align: left; justify-self: start; font-size: 11px; }
+  .fern-note { flex-direction: row; gap: 12px; }
+  .fern-note img { width: 90px; }
+  .sidebar.is-open { max-height: calc(100dvh - 72px); }
 }
 @media (prefers-reduced-motion: reduce) {
   .aurora span { animation: none !important; will-change: auto; }
