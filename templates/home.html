@@ -5,8 +5,9 @@
     </head>
 
     <body>
-        <h1>Welcome, {{ username }}!</h1>
+        <h1>Welcome!</h1>
         <p>This is the home page.</p>
+        <a href="{{ url_for('login') }}" class="login-btn">Log In</a>
     </body>
     
 </html>
