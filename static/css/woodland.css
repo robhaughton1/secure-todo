@@ -1,15 +1,10 @@
 /* Visible blue-violet aurora and layered woodland scenery around quiet paper. */
-:root { --woodland-wash: #e2eadb; --forest-ink: #315e40; --fern-wash: #ceddc3; --error: #8c3949; --error-bg: #f8e9e9; --error-line: #dbb4b8; }
+:root { --aurora-night: radial-gradient(ellipse at 12% 8%, #aabce86b, transparent 65%), radial-gradient(ellipse at 80% 20%, #a799d56b, transparent 65%), radial-gradient(ellipse at 65% 85%, #97a9df6b, transparent 65%), #353447; --woodland-wash: #e2eadb; --forest-ink: #315e40; --fern-wash: #ceddc3; --error: #8c3949; --error-bg: #f8e9e9; --error-line: #dbb4b8; }
 :root[data-theme=dark] { --woodland-wash: #303a2b; --forest-ink: #c2d9ac; --fern-wash: #394932; --error: #e8bac1; --error-bg: #443136; --error-line: #76505b; }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme]) { --woodland-wash: #303a2b; --forest-ink: #c2d9ac; --fern-wash: #394932; --error: #e8bac1; --error-bg: #443136; --error-line: #76505b; }
 }
-.aurora { opacity: 1; background: #d1d8ec; }
-.aurora span { opacity: .8; filter: blur(55px); }
-.aurora span:nth-child(1) { background: #aabce8; }
-.aurora span:nth-child(2) { background: #a799d5; }
-.aurora span:nth-child(3) { background: #97a9df; }
-.aurora span:nth-child(4) { background: #e3e6ef; }
+.aurora { opacity: 1; background: radial-gradient(ellipse at 12% 8%, #aabce8cc, transparent 65%), radial-gradient(ellipse at 80% 20%, #a799d5cc, transparent 65%), radial-gradient(ellipse at 65% 85%, #97a9dfcc, transparent 65%), #d1d8ec; }
 .aurora-waves { position: absolute; inset: -20% -15%; width: 130%; height: 140%; max-width: none; filter: blur(10px); opacity: .8; overflow: visible; }
 .aurora-wave { transform-origin: 50% 50%; animation: ribbon-blue 29s ease-in-out infinite alternate; }
 .wave-violet { animation-name: ribbon-violet; animation-duration: 37s; animation-delay: -13s; }
@@ -25,13 +20,9 @@
 .auth-fox { animation: companion-arrival .9s ease-out; }
 @keyframes resting-companion { 50% { transform: translateY(-2px) scale(1.008); } }
 @keyframes companion-arrival { from { transform: translateY(8px); } to { transform: translateY(0); } }
-:root[data-theme=dark] .aurora { background: #353447; }
-:root[data-theme=dark] .aurora span { opacity: .42; }
-:root[data-theme=dark] .aurora span:nth-child(4) { background: #787894; }
+:root[data-theme=dark] .aurora { background: var(--aurora-night); }
 @media (prefers-color-scheme: dark) {
-  :root:not([data-theme]) .aurora { background: #353447; }
-  :root:not([data-theme]) .aurora span { opacity: .42; }
-  :root:not([data-theme]) .aurora span:nth-child(4) { background: #787894; }
+  :root:not([data-theme]) .aurora { background: var(--aurora-night); }
   :root:not([data-theme]) .aurora-waves { opacity: .6; }
 }
 .landing-atmosphere .aurora { opacity: .76; }
@@ -178,6 +169,5 @@
   .sidebar.is-open { max-height: calc(100dvh - 72px); }
 }
 @media (prefers-reduced-motion: reduce) {
-  .aurora span { animation: none !important; will-change: auto; }
   .aurora-wave, .auth-fox, .empty-stationery img { animation: none !important; }
 }

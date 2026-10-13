@@ -97,6 +97,12 @@ Created: `static/css/cozy.css`; `static/images/fernward-fox-curious.svg`; `stati
 The original PR also adds `templates/base.html`, `templates/auth.html`, shared brand/aurora/navigation/theme/icon/task-card partials, `static/js/theme.js`, the base fox and the brand mark. PR #7 remains the review location; it must remain unmerged.
 # Targeted UI refinement
 
+## Aurora rendering reduction
+
+Replaced four oversized, continuously animated, 55px-blurred color elements with static radial-gradient color washes in both themes. Removed their obsolete markup, keyframes, will-change hints, and theme/motion overrides. The original three overlapping moving SVG ribbons retain their soft 10px blur, timing, and reduced-motion behavior. This reduces the aurora's filtered surfaces from five to one and its continuously animated elements from seven to three; it does not eliminate all browser zoom repainting.
+
+Validation: 40 page/theme/width combinations at 375, 768, 1440, and 2560px showed no horizontal overflow, broken images, or residual blurred span layers. Observed the three ribbon transforms changing over time, inspected the appearance, and reran Flask/Jinja contract and whitespace checks. GPU frame timings and native browser zoom performance were not measurable through the available browser controls; no numerical speedup or complete lag elimination is claimed. Backend and form behavior unchanged.
+
 ## Responsive and performance pass
 
 Root cause: at 2560px the body and atmosphere filled the viewport, but the public header's paper-to-transparent background stopped at its 1480px foreground cap (x=540). Moving that gradient into the full-width atmosphere removes the visible boundary without widening the foreground. The previous woodland SVG used preserveAspectRatio=none and was stretched to viewport width; the landing page now uses a seamless mirrored panorama at proportional sizing with horizontal repetition. The panorama reuses the original paths through SVG use elements rather than duplicating the artwork. Other pages retain the original SVG.

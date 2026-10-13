@@ -216,7 +216,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible {
 .text-link:hover,.nav-login:hover {
   color:var(--accent)
 }
-/* Transform drift complements the overlapping SVG waves without repainting shape geometry. */
+/* Static color wash under the moving SVG ribbons. */
 .aurora {
   position:absolute;
   inset:0;
@@ -225,42 +225,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible {
   pointer-events:none;
   background:#e6dfcf
 }
-.aurora span {
-  position:absolute;
-  filter:blur(65px);
-  border-radius:45% 55% 62% 38%;
-  opacity:.8;
-  will-change:transform;
-  animation:aurora-drift 61s ease-in-out infinite alternate;
-  width:75%;
-  height:90%
-}
-.aurora span:nth-child(1) {
-  background:#dad6e2;
-  left:-25%;
-  top:-20%
-}
-.aurora span:nth-child(2) {
-  background:#d7bcc7;
-  left:45%;
-  top:-25%;
-  animation-duration:61s;
-  animation-delay:-17s
-}
-.aurora span:nth-child(3) {
-  background:#b7c9b7;
-  left:30%;
-  top:45%;
-  animation-duration:61s;
-  animation-delay:-11s
-}
-.aurora span:nth-child(4) {
-  background:#f0e3c8;
-  left:-15%;
-  top:50%;
-  animation-duration:61s;
-  animation-delay:-23s
-}
+
 .aurora:after {
   content:"";
   position:absolute;
@@ -270,23 +235,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible {
 :root[data-theme=dark] .aurora {
   background:#463b3b
 }
-:root[data-theme=dark] .aurora span {
-  opacity:.45
-}
-:root[data-theme=dark] .aurora span:nth-child(4) {
-  background:#6c5b51
-}
-@keyframes aurora-drift {
-  0% {
-    transform:translate(-4%,-7%) rotate(-15deg) scale(1)
-  }
-  50% {
-    transform:translate(12%,14%) rotate(15deg) scale(1.12)
-  }
-  100% {
-    transform:translate(-8%,23%) rotate(30deg) scale(.95,1.2)
-  }
-}
+
 .landing-page {
   min-height:100vh;
   position:relative
@@ -887,10 +836,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible {
   height:155px;
   margin:-16px -12px -20px 20px
 }
-.welcome-banner .aurora span {
-  animation-duration:59s,67s;
-  opacity:.45
-}
+
 :root[data-theme=dark] .welcome-banner {
   color:#f5e8d3
 }
@@ -1599,8 +1545,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible {
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme]) .button { color: #302420; }
   :root:not([data-theme]) .aurora { background: #463b3b; }
-  :root:not([data-theme]) .aurora span { opacity: .45; }
-  :root:not([data-theme]) .aurora span:nth-child(4) { background: #6c5b51; }
+
   :root:not([data-theme]) .auth-art { color: #f5e8d3; }
   :root:not([data-theme]) .auth-art:after { background: linear-gradient(180deg,#3d2e2990,transparent 70%); }
   :root:not([data-theme]) .welcome-banner { color: #f5e8d3; }
@@ -1636,9 +1581,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible {
     transition:none!important;
     scroll-behavior:auto!important
   }
-  .aurora span {
-    will-change:auto
-  }
+
   .form-engaged .auth-fox {
     transform:none
   }
