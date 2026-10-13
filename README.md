@@ -75,5 +75,3 @@ The application currently creates its SQLite tables during local startup. Regist
 ## Development and deployment considerations
 
 This project currently uses local Redis at `127.0.0.1:6379` and verifies Turnstile hostnames only for `localhost` and `127.0.0.1`. A deployment requires suitable Redis connection configuration, a production Turnstile hostname allowlist, HTTPS, and a production WSGI server.
-
-Do **not** expose Flask's interactive debugger publicly. Run with debug mode disabled outside local development. Keep secret values out of the repository and review operational logging, cookie security settings, error handling, and tests before treating this application as production-ready.
