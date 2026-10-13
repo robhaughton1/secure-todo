@@ -34,6 +34,8 @@
 .auth-woodland { position: absolute; left: -18%; bottom: -5px; width: 135%; max-width: none; opacity: .6; z-index: -1; }
 .art-topline { padding: 7px 10px; border-radius: 8px; background: var(--paper); }
 .art-bottom { background: var(--paper); border-radius: 8px; padding: 8px 12px; bottom: 20px; }
+.auth-fox { width: 62%; bottom: 36px; }
+.art-checklist { bottom: 215px; z-index: 3; }
 .sidebar { background: linear-gradient(180deg,var(--paper),var(--woodland-wash)); border-right: 1px solid #8ba08060; }
 .sidebar-link.active { background: var(--fern-wash); color: var(--forest-ink); }
 .sidebar-note { border-color: #8ba08070; }
@@ -60,11 +62,13 @@
 .paper-slip { background: var(--fern-wash); color: var(--forest-ink); }
 .notebook-footer { background: linear-gradient(90deg,var(--woodland-wash),var(--paper)); border-radius: 0 0 23px 7px; }
 @media (max-width: 1100px) {
+  .auth-fox { bottom: 56px; }
   .journal-sky-copy { width: 76%; }
   .journal-sky .page-heading time { top: 16px; right: 16px; font-size: 10px; }
   .journal-sky .page-heading .handwritten { margin-top: 20px; }
 }
 @media (max-width: 900px) {
+  .art-checklist { bottom: 230px; }
   .auth-art-copy { padding: 18px; }
   .auth-art-copy h2 { font-size: 30px; }
   .auth-art-copy p { font-size: 13px; }

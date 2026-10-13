@@ -6,6 +6,8 @@ The next visual pass restores a clearly visible animated periwinkle/blue/violet 
 
 New assets are `static/images/woodland-clearing.svg` and `static/css/woodland.css`. Shared base, dashboard, home and authentication templates include the new visual layer. Backend and task-preview behavior are unchanged. Reduced motion still stops the sky animation. This refinement was re-rendered through the existing form-contract harness and rechecked at the four target responsive widths in both themes.
 
+Authentication spacing fix: login and registration foxes are slightly smaller and sit lower in the scene, with space above “I saved you a little spot.” The stationery note is positioned separately and remains above the decorative artwork so the tail cannot obscure “Remember to pause.” Both pages were checked at 375, 768, 1024 and 1440 pixels with no horizontal overflow or note/intro collision; form contracts still pass the rendering checks.
+
 ## What changed in this revision
 
 Fernward now feels like a personal journal and woodland study nook. Warm cream and parchment surfaces, dusty mauve, soft lavender and sage replace the previous silver/indigo direction. Dark mode uses warm brown paper, cream text and a soft lamplight wash. Serif headings and small, local handwriting-style accents complement readable system-font controls. Texture is made from lightweight CSS gradients; there are no remote fonts or image dependencies.
