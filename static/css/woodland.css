@@ -10,6 +10,21 @@
 .aurora span:nth-child(2) { background: #a799d5; }
 .aurora span:nth-child(3) { background: #97a9df; }
 .aurora span:nth-child(4) { background: #e3e6ef; }
+.aurora-waves { position: absolute; inset: -20% -15%; width: 130%; height: 140%; max-width: none; filter: blur(10px); opacity: .8; overflow: visible; }
+.aurora-wave { transform-origin: 50% 50%; animation: ribbon-blue 29s ease-in-out infinite alternate; }
+.wave-violet { animation-name: ribbon-violet; animation-duration: 37s; animation-delay: -13s; }
+.wave-silver { animation-name: ribbon-silver; animation-duration: 43s; animation-delay: -21s; }
+.journal-sky .aurora-wave { animation-duration: 53s; }
+.journal-sky .wave-violet { animation-duration: 61s; }
+.journal-sky .wave-silver { animation-duration: 67s; }
+:root[data-theme=dark] .aurora-waves { opacity: .6; }
+@keyframes ribbon-blue { 0% { transform: translate(-7%,-9%) rotate(-7deg) scale(1,.8); } 50% { transform: translate(4%,8%) rotate(3deg) scale(1.1,1.15); } 100% { transform: translate(9%,-3%) rotate(8deg) scale(1,.95); } }
+@keyframes ribbon-violet { 0% { transform: translate(9%,9%) rotate(8deg) scale(1.05,1.1); } 50% { transform: translate(-5%,-8%) rotate(-4deg) scale(1,.75); } 100% { transform: translate(-9%,5%) rotate(-8deg) scale(1.1,1.2); } }
+@keyframes ribbon-silver { 0% { transform: translate(-5%,9%) skewY(-5deg) scale(1.1,.75); } 100% { transform: translate(7%,-12%) skewY(7deg) scale(1,1.25); } }
+.empty-stationery img { transform-origin: 50% 80%; animation: resting-companion 9s ease-in-out infinite; }
+.auth-fox { animation: companion-arrival .9s ease-out; }
+@keyframes resting-companion { 50% { transform: translateY(-2px) scale(1.008); } }
+@keyframes companion-arrival { from { transform: translateY(8px); } to { transform: translateY(0); } }
 :root[data-theme=dark] .aurora { background: #353447; }
 :root[data-theme=dark] .aurora span { opacity: .42; }
 :root[data-theme=dark] .aurora span:nth-child(4) { background: #787894; }
@@ -17,6 +32,7 @@
   :root:not([data-theme]) .aurora { background: #353447; }
   :root:not([data-theme]) .aurora span { opacity: .42; }
   :root:not([data-theme]) .aurora span:nth-child(4) { background: #787894; }
+  :root:not([data-theme]) .aurora-waves { opacity: .6; }
 }
 .landing-atmosphere .aurora { opacity: .76; }
 .landing-atmosphere { overflow: hidden; }
@@ -87,4 +103,5 @@
 }
 @media (prefers-reduced-motion: reduce) {
   .aurora span { animation: none !important; will-change: auto; }
+  .aurora-wave, .auth-fox, .empty-stationery img { animation: none !important; }
 }
