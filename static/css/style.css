@@ -1,49 +1,49 @@
-/* Fernward: silver skies, violet fox, sage fern. No external assets or libraries. */
+/* Fernward: parchment, woodland sage, violet fox, and warm lamplight. No external assets or libraries. */
 :root {
   color-scheme:light;
-  --bg:#f7f7fb;
-  --surface:#fff;
-  --surface-soft:#eeedf5;
-  --text:#24253f;
-  --muted:#62637a;
-  --line:#dcdce7;
-  --accent:#5545a3;
-  --accent-hover:#433487;
-  --accent-soft:#ece8fb;
+  --bg:#f6f0e5;
+  --surface:#fffaf0;
+  --surface-soft:#eee5d7;
+  --text:#443d36;
+  --muted:#716458;
+  --line:#d9cdbb;
+  --accent:#74607c;
+  --accent-hover:#5e4b65;
+  --accent-soft:#eadfeb;
   --shadow:0 18px 60px #2427440c;
   --error:#9a253c;
   --error-bg:#fff0f3;
-  --hero-text:#252644
+  --hero-text:#443d36
 }
 :root[data-theme=dark] {
   color-scheme:dark;
-  --bg:#141622;
-  --surface:#1b1e2c;
-  --surface-soft:#252839;
-  --text:#eff0f8;
-  --muted:#b3b5ca;
-  --line:#383b51;
-  --accent:#c3b5ff;
-  --accent-hover:#d5cbff;
-  --accent-soft:#30294b;
+  --bg:#29231f;
+  --surface:#342c26;
+  --surface-soft:#40362e;
+  --text:#f5e8d3;
+  --muted:#c8b79e;
+  --line:#655447;
+  --accent:#d9bcd4;
+  --accent-hover:#e8cde2;
+  --accent-soft:#493847;
   --shadow:0 18px 60px #0002;
   --error:#ffc0cc;
   --error-bg:#39212b;
-  --hero-text:#f4f2ff
+  --hero-text:#f5e8d3
 }
 @media(prefers-color-scheme:dark) {
   :root:not([data-theme]) {
     color-scheme:dark;
-    --bg:#141622;
-    --surface:#1b1e2c;
-    --surface-soft:#252839;
-    --text:#eff0f8;
-    --muted:#b3b5ca;
-    --line:#383b51;
-    --accent:#c3b5ff;
-    --accent-hover:#d5cbff;
-    --accent-soft:#30294b;
-    --hero-text:#f4f2ff
+    --bg:#29231f;
+    --surface:#342c26;
+    --surface-soft:#40362e;
+    --text:#f5e8d3;
+    --muted:#c8b79e;
+    --line:#655447;
+    --accent:#d9bcd4;
+    --accent-hover:#e8cde2;
+    --accent-soft:#493847;
+    --hero-text:#f5e8d3
   }
 }
 * {
@@ -177,7 +177,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible {
   padding:16px 23px;
   min-height:48px;
   background:var(--accent);
-  color:#fff;
+  color:#fffaf0;
   text-decoration:none;
   font-weight:600;
   font-size:14px;
@@ -189,7 +189,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible {
   transform:translateY(-2px)
 }
 :root[data-theme=dark] .button {
-  color:#211a38
+  color:#302420
 }
 .button-small {
   padding:11px 17px;
@@ -223,7 +223,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible {
   overflow:hidden;
   isolation:isolate;
   pointer-events:none;
-  background:#d8ddf2
+  background:#e6dfcf
 }
 .aurora span {
   position:absolute;
@@ -236,26 +236,26 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible {
   height:90%
 }
 .aurora span:nth-child(1) {
-  background:#b5c4ed;
+  background:#dad6e2;
   left:-25%;
   top:-20%
 }
 .aurora span:nth-child(2) {
-  background:#a399dc;
+  background:#d7bcc7;
   left:45%;
   top:-25%;
   animation-duration:41s,47s;
   animation-delay:-17s
 }
 .aurora span:nth-child(3) {
-  background:#8e9ee0;
+  background:#b7c9b7;
   left:30%;
   top:45%;
   animation-duration:33s,43s;
   animation-delay:-11s
 }
 .aurora span:nth-child(4) {
-  background:#e3e7ef;
+  background:#f0e3c8;
   left:-15%;
   top:50%;
   animation-duration:39s,31s;
@@ -268,13 +268,13 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible {
   background:linear-gradient(130deg,#fff2,transparent 50%,#44316912)
 }
 :root[data-theme=dark] .aurora {
-  background:#222b50
+  background:#463b3b
 }
 :root[data-theme=dark] .aurora span {
   opacity:.45
 }
 :root[data-theme=dark] .aurora span:nth-child(4) {
-  background:#526182
+  background:#6c5b51
 }
 @keyframes aurora-drift {
   0% {
@@ -577,14 +577,14 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible {
   position:absolute;
   content:"";
   inset:0;
-  background:linear-gradient(180deg,#f1f1ff80,transparent 70%);
+  background:linear-gradient(180deg,#fff2d280,transparent 70%);
   z-index:-1
 }
 :root[data-theme=dark] .auth-art {
-  color:#f4f2ff
+  color:#f5e8d3
 }
 :root[data-theme=dark] .auth-art:after {
-  background:linear-gradient(180deg,#161c4590,transparent 70%)
+  background:linear-gradient(180deg,#3d2e2990,transparent 70%)
 }
 .art-topline {
   display:flex;
@@ -876,7 +876,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible {
   content:"";
   inset:0;
   position:absolute;
-  background:#f5f5ff80;
+  background:#faf0d880;
   z-index:-1
 }
 .welcome-banner .eyebrow {
@@ -903,13 +903,13 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible {
   opacity:.45
 }
 :root[data-theme=dark] .welcome-banner {
-  color:#eff0ff
+  color:#f5e8d3
 }
 :root[data-theme=dark] .welcome-banner:after {
-  background:#1e244760
+  background:#3b2d2960
 }
 :root[data-theme=dark] .welcome-banner .eyebrow {
-  color:#c2c4df
+  color:#d8c7ad
 }
 .summary-grid {
   display:grid;
@@ -1608,15 +1608,15 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible {
 }
 /* Match the system theme even if JavaScript is unavailable. */
 @media (prefers-color-scheme: dark) {
-  :root:not([data-theme]) .button { color: #211a38; }
-  :root:not([data-theme]) .aurora { background: #222b50; }
+  :root:not([data-theme]) .button { color: #302420; }
+  :root:not([data-theme]) .aurora { background: #463b3b; }
   :root:not([data-theme]) .aurora span { opacity: .45; }
-  :root:not([data-theme]) .aurora span:nth-child(4) { background: #526182; }
-  :root:not([data-theme]) .auth-art { color: #f4f2ff; }
-  :root:not([data-theme]) .auth-art:after { background: linear-gradient(180deg,#161c4590,transparent 70%); }
-  :root:not([data-theme]) .welcome-banner { color: #eff0ff; }
-  :root:not([data-theme]) .welcome-banner:after { background: #1e244760; }
-  :root:not([data-theme]) .welcome-banner .eyebrow { color: #c2c4df; }
+  :root:not([data-theme]) .aurora span:nth-child(4) { background: #6c5b51; }
+  :root:not([data-theme]) .auth-art { color: #f5e8d3; }
+  :root:not([data-theme]) .auth-art:after { background: linear-gradient(180deg,#3d2e2990,transparent 70%); }
+  :root:not([data-theme]) .welcome-banner { color: #f5e8d3; }
+  :root:not([data-theme]) .welcome-banner:after { background: #3b2d2960; }
+  :root:not([data-theme]) .welcome-banner .eyebrow { color: #d8c7ad; }
 }
 /* Without JavaScript, keep navigation and POST logout reachable on small screens. */
 @media(max-width:900px) {

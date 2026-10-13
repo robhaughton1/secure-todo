@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% block title %}Fernward — A little space to move forward{% endblock %}
+{% block title %}Fernward — Your cozy little nook{% endblock %}
 {% block body_class %}landing-page{% endblock %}
 {% block content %}
 <div class="landing-atmosphere">
@@ -10,12 +10,12 @@
 <section class="hero" aria-labelledby="hero-title">
 <div class="hero-copy">
 <p class="eyebrow">
-<span class="little-star" aria-hidden="true">✦</span> A CLEARER PATH THROUGH YOUR DAY</p>
-<h1 id="hero-title">A little space.<br>A lot of <em>possibility.</em>
+<span class="little-star" aria-hidden="true">✦</span> A LITTLE NOOK OF YOUR OWN</p>
+<h1 id="hero-title">Come on in.<br>Make yourself <em>at home.</em>
 </h1>
-<p class="hero-description">Meet Fernward. A thoughtful home for what’s next, with a little woodland spirit along the way.</p>
+<p class="hero-description">A quiet place for your everyday plans, a fresh page, and a friendly fox to keep you company. Put the kettle on. We’ll take it one little thing at a time.</p>
 <div class="hero-actions">
-<a class="button" href="{{ url_for('register') }}">Make yourself at home <span aria-hidden="true">↗</span>
+<a class="button" href="{{ url_for('register') }}">Find your little nook <span aria-hidden="true">↗</span>
 </a>
 <a class="text-link" href="{{ url_for('login') }}">Already here? Log in <span aria-hidden="true">→</span>
 </a>
@@ -23,23 +23,23 @@
 <p class="quiet-note">Growing thoughtfully. Task management is coming soon.</p>
 </div>
 <div class="hero-scene">
-<div class="scene-orbit" aria-hidden="true">
+<div class="scene-orbit" aria-hidden="true"><span class="scene-notebook-title">a few good things</span><span class="notebook-lines"></span>
 </div>
 <span class="scene-star star-one" aria-hidden="true">✧</span>
 <span class="scene-star star-two" aria-hidden="true">✦</span>
 <div class="scene-label">
 <span class="status-dot" aria-hidden="true">
-</span> A fresh start, at your pace.</div>
-<img class="hero-fox" src="{{ url_for('static', filename='images/fernward-fox.svg') }}" alt="Fernward’s calm woodland fox, curled beside its distinctive fern-shaped tail" width="460" height="420">
+</span> The kettle’s on. There’s room for you.</div>
+<img class="hero-fox" src="{{ url_for('static', filename='images/fernward-fox-cheerful.svg') }}" alt="Fernward’s violet fox waving a cheerful paw beside its fern-shaped tail" width="460" height="420">
 <div class="scene-caption">
-<span>YOUR QUIET COMPANION</span>
-<strong>A curious spirit.<br>A grounded approach.</strong>
+<span>A NOTE FROM YOUR COMPANION</span>
+<strong>“Bring your small plans.<br>I’ll bring the company.”</strong>
 </div>
 </div>
 </section>
 <div class="landing-footer">
-<span>Room to think. Space to grow.</span>
-<span>Made for the next small step <span aria-hidden="true">↗</span>
+<span>Fresh pages. Warm company.</span>
+<span>At your own gentle pace <span aria-hidden="true">↗</span>
 </span>
 </div>
 </main>

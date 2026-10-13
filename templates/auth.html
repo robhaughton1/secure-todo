@@ -5,7 +5,7 @@
 <main id="main" class="auth-layout">
 <section class="auth-panel" aria-labelledby="auth-title">
 <a class="back-link" href="{{ url_for('home') }}">
-<span aria-hidden="true">←</span> Back to your clearing</a>
+<span aria-hidden="true">←</span> Back to the front porch</a>
 <div class="auth-form-content">
 <div class="auth-small-fox">
 <img src="{{ url_for('static', filename='images/fernward-mark.svg') }}" width="48" height="48" alt="">
@@ -25,17 +25,17 @@
 {% block form %}
 {% endblock %}
 </div>
-<p class="auth-footnote">A little focus goes a long way.</p>
+<p class="auth-footnote">Your own space. Your own pace.</p>
 </section>
 <aside class="auth-art" aria-label="Fernward woodland illustration">
 {% include 'partials/aurora.html' %}
 <div class="art-topline">
-<span>FIND YOUR CLEARING</span>
+<span>COME IN. GET COMFORTABLE.</span>
 <span aria-hidden="true">✦</span>
 </div>
 <div class="auth-art-copy">
-<h2>Good things grow<br>one step at a time.</h2>
-<p>Settle in. Take a breath. Begin again.</p>
+<h2>A fresh page.<br>A familiar friend.</h2>
+<p>There’s a cozy corner here with your name on it.</p>
 </div>
 <div class="art-orbit" aria-hidden="true">
 </div>
@@ -44,16 +44,16 @@
 <span class="floating-leaf leaf-two" aria-hidden="true">
 </span>
 <div class="art-checklist" aria-hidden="true">
-<span>YOUR NEXT CHAPTER</span>
-<i>✓ <b>A little room to think</b>
+<span>A NOTE TO YOURSELF</span>
+<i>✓ <b>Make a cup of something warm</b>
 </i>
-<i>○ <b>Something to look forward to</b>
+<i>○ <b>Leave room for a small plan</b>
 </i>
-<i>○ <b>One step at a time</b>
+<i>○ <b>Remember to pause</b>
 </i>
 </div>
-<img class="auth-fox" src="{{ url_for('static', filename='images/fernward-fox.svg') }}" width="460" height="420" alt="The Fernward fox sitting quietly beside a fern-shaped tail">
-<p class="art-bottom">A small companion for your big ideas. <span aria-hidden="true">↗</span>
+<img class="auth-fox" src="{{ url_for('static', filename=auth_pose | default('images/fernward-fox-curious.svg')) }}" width="460" height="420" alt="Your woodland fox companion with its distinctive fern-shaped tail">
+<p class="art-bottom">I saved you a little spot. ✿ <span aria-hidden="true">↗</span>
 </p>
 </aside>
 </main>

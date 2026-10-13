@@ -1,12 +1,13 @@
 {% extends 'auth.html' %}
+{% set auth_pose = 'images/fernward-fox-cheerful.svg' %}
 {% block title %}Fernward | Login{% endblock %}
 {% block head %}
 <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer>
 </script>
 {% endblock %}
-{% block auth_eyebrow %}YOUR SPACE IS WAITING{% endblock %}
-{% block auth_title %}Welcome back.{% endblock %}
-{% block auth_intro %}Ready to pick up where you left off?{% endblock %}
+{% block auth_eyebrow %}YOUR LITTLE NOOK IS WAITING{% endblock %}
+{% block auth_title %}Welcome home.{% endblock %}
+{% block auth_intro %}Come in, settle down, and pick up your next small plan.{% endblock %}
 {% block form %}
 <form id="loginForm" class="authForm" method="post" action="/login">
 {% if error %}
