@@ -26,8 +26,12 @@
       <div class="header-actions">{% include 'partials/theme-toggle.html' %}<span class="avatar" aria-label="Your profile">{{ username[:1] | upper }}</span></div>
     </header>
     <main id="main" class="dashboard-main journal-main">
-      <div class="page-heading"><div><p class="handwritten">Let’s make a little room.</p><h1>Your journal</h1></div><time data-current-date></time></div>
-      <section class="journal-welcome" aria-labelledby="welcome-title"><div><h2 id="welcome-title">Glad you’re here, {{ username }}.</h2><p>Settle into your nook. There’s room for small plans and unhurried beginnings.</p></div><span class="pressed-flower" aria-hidden="true">✿</span></section>
+      <div class="journal-sky">
+        {% include 'partials/aurora.html' %}
+        <img class="woodland-view" src="{{ url_for('static', filename='images/woodland-clearing.svg') }}" width="900" height="360" alt="" aria-hidden="true">
+        <div class="journal-sky-copy"><div class="page-heading"><div><p class="handwritten">A little clearing, just for you.</p><h1>Your journal</h1></div><time data-current-date></time></div>
+        <section class="journal-welcome" aria-labelledby="welcome-title"><div><h2 id="welcome-title">Glad you’re here, {{ username }}.</h2><p>Settle into your nook. There’s room for small plans and unhurried beginnings.</p></div></section></div>
+      </div>
       <div class="journal-grid">
         <section class="task-workspace notebook" aria-labelledby="tasks-title">
           <div class="notebook-binding" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>

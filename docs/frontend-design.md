@@ -1,10 +1,16 @@
 # Fernward frontend — cozy journal revision
 
+## Woodland and aurora refinement
+
+The next visual pass restores a clearly visible animated periwinkle/blue/violet aurora rather than the previous near-invisible wash. The dashboard now has an illustrated clearing banner: flowing sky above layered original SVG pine trees, broadleaf trees, rolling green hills and foreground foliage. Text sits over a paper fade, and task cards remain quiet paper surfaces. Landing and authentication scenery also use the woodland artwork, with stronger aurora color. Sidebar, notebook heading, binding details, fox companion note and fern accents now carry more woodland green in both light and warm dark themes.
+
+New assets are `static/images/woodland-clearing.svg` and `static/css/woodland.css`. Shared base, dashboard, home and authentication templates include the new visual layer. Backend and task-preview behavior are unchanged. Reduced motion still stops the sky animation. This refinement was re-rendered through the existing form-contract harness and rechecked at the four target responsive widths in both themes.
+
 ## What changed in this revision
 
 Fernward now feels like a personal journal and woodland study nook. Warm cream and parchment surfaces, dusty mauve, soft lavender and sage replace the previous silver/indigo direction. Dark mode uses warm brown paper, cream text and a soft lamplight wash. Serif headings and small, local handwriting-style accents complement readable system-font controls. Texture is made from lightweight CSS gradients; there are no remote fonts or image dependencies.
 
-The landing page welcomes users with a taped notebook, a waving fox and personal copy. Login and registration keep their existing forms while adding paper rules, botanical drawings and a small note to yourself. Aurora motion remains on public/authentication pages at much lower opacity and softer blur. The actual task workspace does not animate continuously.
+The landing page welcomes users with a taped notebook, a waving fox and personal copy. Login and registration keep their existing forms while adding paper rules, botanical drawings and a small note to yourself. Aurora motion remains around public/authentication scenery and in the dashboard clearing banner. The notebook task area does not animate continuously.
 
 The dashboard is now **Your journal**. Analytics cards are removed entirely. The task notebook is the main visual area, with paper rules, binding loops and a resting-fox empty state. A smaller companion note sits alongside it; its gentle messages change only when the user requests another thought. A seed-to-sprout-to-fern sketch is explicitly decorative, a future feature, and not connected to tasks or progress. There are no counts, scores, streaks or pressure messages.
 
