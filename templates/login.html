@@ -1,139 +1,38 @@
-
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>Fernward | Login</title>
-
-    <!-- Stylesheets -->
-    <link rel="stylesheet" href="/static/css/style.css">
-
-    <link
-        href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600&family=Nunito:wght@400;500;600&display=swap"
-        rel="stylesheet">
-
-    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
-</head>
-
-<body>
-
-    <!-- Fernward branding -->
-    <div class="brand">
-        <div class="brand-logo">
-            <h1>Fernward</h1>
-
-            <img
-                src="{{ url_for('static', filename='images/floral-wreath.svg') }}"
-                alt=""
-                class="floral-wreath">
-        </div>
-    </div>
-
-    <!-- Login scene -->
-    <div class="auth-scene">
-
-        <!-- Cat mascot -->
-        <img
-            src="{{ url_for('static', filename='images/cat.svg') }}"
-            class="auth-mascot auth-mascot-left"
-            alt=""
-            aria-hidden="true">
-
-        <!-- Frog mascot -->
-        <img
-            src="{{ url_for('static', filename='images/frog.svg') }}"
-            class="auth-mascot auth-mascot-right"
-            alt=""
-            aria-hidden="true">
-
-        <!-- Login card -->
-        <div class="authContainer">
-
-            <h2>Ready to pick up where you left off?</h2>
-
-            <form
-                id="loginForm"
-                class="authForm"
-                method="post"
-                action="/login">
-
-                <!-- Authentication errors -->
-                {% if error %}
-                    <div class="auth-error" role="alert">
-                        <span class="error-icon" aria-hidden="true">!</span>
-                        <span>{{ error }}</span>
-                    </div>
-                {% endif %}
-
-                <!-- Username -->
-                <div class="usernameContainer">
-                    <label for="username">Username</label>
-
-                    <div class="input-wrapper">
-                        <img
-                            src="{{ url_for('static', filename='images/user.svg') }}"
-                            alt=""
-                            aria-hidden="true">
-
-                        <input
-                            type="text"
-                            id="username"
-                            name="username"
-                            placeholder="Enter your username"
-                            autocomplete="username"
-                            value="{{ username | default('', true) }}"
-                            required>
-                    </div>
-                </div>
-
-                <!-- Password -->
-                <div class="passwordContainer">
-                    <label for="password">Password</label>
-
-                    <div class="input-wrapper">
-                        <img
-                            src="{{ url_for('static', filename='images/lock.svg') }}"
-                            alt=""
-                            aria-hidden="true">
-
-                        <input
-                            type="password"
-                            id="password"
-                            name="password"
-                            placeholder="Enter your password"
-                            autocomplete="current-password"
-                            required>
-                    </div>
-                </div>
-
-                <!-- Cloudflare Turnstile CAPTCHA -->
-                 {% if show_captcha %}
-                    <div class="cf-turnstile" data-sitekey="{{ turnstile_site_key }}">
-                    </div>
-                 {% endif %}
-
-                <!-- Login button -->
-                <div class="authButtonDiv">
-                    <button
-                        type="submit"
-                        id="loginButton"
-                        class="authButton">
-                        Login
-                    </button>
-                </div>
-
-                <!-- Registration link -->
-                <p class="auth-switch">
-                    New to Fernward?
-                    <a href="{{ url_for('register') }}">Create an account</a>
-                </p>
-
-            </form>
-        </div>
-    </div>
-
-</body>
-</html>
+{% extends 'auth.html' %}
+{% from 'partials/auth-errors.html' import auth_alert, field_error %}
+{% set auth_pose = 'images/fernward-fox-cheerful.svg' %}
+{% block title %}Fernward | Login{% endblock %}
+{% block head %}
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer>
+</script>
+{% endblock %}
+{% block auth_eyebrow %}YOUR LITTLE NOOK IS WAITING{% endblock %}
+{% block auth_title %}Welcome home.{% endblock %}
+{% block auth_intro %}Come in, settle down, and pick up your next small plan.{% endblock %}
+{% block form %}
+<form id="loginForm" class="authForm" method="post" action="/login">
+{% if error %}
+{{ auth_alert(error) }}
+{% endif %}
+<div class="form-field">
+<label for="username">Username</label>
+<input type="text" id="username" name="username" placeholder="Enter your username" autocomplete="username" value="{{ username | default('', true) }}" data-required-message="Enter your username." {% if error %}aria-describedby="form-error"{% endif %} required>
+{{ field_error('username') }}
+</div>
+<div class="form-field">
+<label for="password">Password</label>
+<input type="password" id="password" name="password" placeholder="Enter your password" autocomplete="current-password" data-required-message="Enter your password." {% if error %}aria-describedby="form-error"{% endif %} required>
+{{ field_error('password') }}
+</div>
+{% if show_captcha %}
+<div class="captcha-wrapper">
+<div class="cf-turnstile" data-sitekey="{{ turnstile_site_key }}" data-size="flexible">
+</div>
+</div>
+{% endif %}
+<button type="submit" id="loginButton" class="button authButton">Log in <span aria-hidden="true">→</span>
+</button>
+<p class="auth-switch">New to Fernward? <a href="{{ url_for('register') }}">Create an account</a>
+</p>
+</form>
+{% endblock %}

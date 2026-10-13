@@ -1,13 +1,43 @@
-<!DOCTYPE html>
-<html> 
-    <head>
-        <title>Home</title>
-    </head>
-
-    <body>
-        <h1>Welcome!</h1>
-        <p>This is the home page.</p>
-        <a href="{{ url_for('login') }}" class="login-btn">Log In</a>
-    </body>
-    
-</html>
+{% extends 'base.html' %}
+{% block title %}Fernward — Your cozy little nook{% endblock %}
+{% block body_class %}landing-page{% endblock %}
+{% block content %}
+<div class="landing-atmosphere">
+{% include 'partials/aurora.html' %}
+<div class="landing-woodland" aria-hidden="true"></div>
+</div>
+{% include 'partials/public-nav.html' %}
+<main id="main" class="landing-main">
+<section class="hero" aria-labelledby="hero-title">
+<div class="hero-copy">
+<p class="eyebrow">
+<span class="little-star" aria-hidden="true">✦</span> A LITTLE NOOK OF YOUR OWN</p>
+<h1 id="hero-title">Come on in.<br>Make yourself <em>at home.</em>
+</h1>
+<p class="hero-description">A cozy home for your tasks and everyday plans, with a fox to keep you company.</p>
+<div class="hero-actions">
+<a class="button" href="{{ url_for('register') }}">Create an account <span aria-hidden="true">→</span>
+</a>
+<a class="text-link" href="{{ url_for('login') }}">Already here? Log in <span aria-hidden="true">→</span>
+</a>
+</div>
+<p class="quiet-note">Create your account now. Organizing tasks is coming soon.</p>
+</div>
+<div class="hero-scene">
+<div class="scene-orbit" aria-hidden="true"><span class="scene-notebook-title">a few good things</span>
+</div>
+<div class="scene-label">
+<span class="status-dot" aria-hidden="true">
+</span> The kettle’s on. There’s room for you.</div>
+<img class="hero-fox" src="{{ url_for('static', filename='images/fernward-fox-cheerful.svg') }}" alt="Fernward’s violet fox waving a cheerful paw beside its fern-shaped tail" width="460" height="420">
+<div class="scene-caption">
+<span>A NOTE FROM YOUR COMPANION</span>
+<strong>Your plans.<br>I’ll keep you company.</strong>
+</div>
+</div>
+</section>
+<div class="landing-footer">
+<a href="{{ url_for('about') }}">About Fernward</a>
+</div>
+</main>
+{% endblock %}

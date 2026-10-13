@@ -1,0 +1,20 @@
+<details class="design-sketchbook">
+  <summary><span>From the sketchbook</span><span>Frontend-only design previews ↓</span></summary>
+  <div class="sketchbook-content" data-design-preview>
+    <p class="preview-disclosure" id="preview-description">Illustrative examples only. This is a design preview: no real tasks, accounts, statistics or saved changes. Task management is not available yet.</p>
+    <div class="preview-controls" aria-label="Choose a design preview" hidden data-preview-controls>
+      <button type="button" data-preview-state="pending" aria-pressed="true">A small next step</button>
+      <button type="button" data-preview-state="completed" aria-pressed="false">Something finished</button>
+      <button type="button" data-preview-state="empty" aria-pressed="false">A fresh page</button>
+      <button type="button" data-preview-state="all-done" aria-pressed="false">All done</button>
+    </div>
+    <section data-preview-panel="task" class="preview-task-panel" aria-label="Illustrative task card">
+      <article class="task-card preview-task"><label class="preview-checkbox"><input type="checkbox" data-preview-complete disabled aria-describedby="preview-description"><span class="sr-only">Preview completing the illustrative task</span></label><div class="task-card-copy"><p class="specimen-label">ILLUSTRATIVE TASK · NOT SAVED</p><h3>Read a few pages by the window</h3><p>A cup of tea and a chapter sounds nice.</p><div class="task-meta"><span class="task-priority">Medium priority</span><span data-preview-status>Pending · design example</span><span>No due date</span></div></div><span class="card-doodle" aria-hidden="true">✿</span></article>
+      <div class="preview-reaction" data-preview-reaction hidden><img src="{{ url_for('static', filename='images/fernward-fox-cheerful.svg') }}" width="110" height="100" alt="The fox waving a cheerful paw"><p class="handwritten">Yay! You did it!</p></div>
+      <p class="preview-hint">When enabled, the preview checkbox shows a small completion reaction. It never changes application data.</p>
+    </section>
+    <section data-preview-panel="empty" hidden aria-label="Empty list design example"><p class="specimen-label">EMPTY LIST · DESIGN EXAMPLE</p>{% include 'partials/journal-empty.html' %}</section>
+    <section data-preview-panel="all-done" hidden aria-label="All-done design example"><p class="specimen-label">ALL DONE · DESIGN EXAMPLE</p>{% include 'partials/completion-feedback.html' %}</section>
+    <p class="sr-only" data-preview-announcement role="status" aria-live="polite" aria-atomic="true"></p>
+  </div>
+</details>
