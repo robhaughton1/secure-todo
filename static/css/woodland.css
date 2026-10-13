@@ -72,7 +72,7 @@
 .journal-sky { position: relative; isolation: isolate; overflow: hidden; border-radius: 22px 35px 22px 12px; min-height: 178px; margin-bottom: 24px; border: 1px solid #8ba08070; box-shadow: 0 10px 25px #3b4e350b; }
 .journal-sky > .aurora { z-index: -3; }
 .journal-sky:after { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(90deg,var(--paper) 0%,var(--paper) 32%,transparent 90%); }
-.woodland-view { position: absolute; right: -6%; bottom: 0; width: 67%; max-width: none; height: 155px; z-index: -2; }
+.woodland-view { position: absolute; right: -6%; bottom: 0; width: 67%; max-width: none; height: 155px; z-index: -2; -webkit-mask-image: linear-gradient(to right, transparent, #000 28%); mask-image: linear-gradient(to right, transparent, #000 28%); }
 .journal-sky-copy { padding: 20px 28px; width: 68%; }
 .journal-sky .page-heading { display: block; margin-bottom: 12px; }
 .journal-sky .page-heading h1 { margin-top: 3px; }
