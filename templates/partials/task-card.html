@@ -1,0 +1,19 @@
+{# Future component, not rendered until a real task contract exists.
+Expected task: title, description, priority, status, due_date_label.
+Actions disabled pending secure backend integration. #}
+<article class="task-card">
+<input type="checkbox" disabled {% if task.status == 'completed' %}checked{% endif %} aria-label="Completion for {{ task.title }} (unavailable)">
+<div class="task-card-copy">
+<h3>{{ task.title }}</h3>
+<p>{{ task.description }}</p>
+<div class="task-meta">
+<span class="task-priority">{{ task.priority }}</span>
+<span>{{ task.status }}</span>
+<span>{{ task.due_date_label | default('No due date', true) }}</span>
+</div>
+</div>
+<div class="task-card-actions">
+<button type="button" disabled aria-label="Edit {{ task.title }} (coming soon)">Edit</button>
+<button type="button" disabled aria-label="Delete {{ task.title }} (coming soon)">Delete</button>
+</div>
+</article>

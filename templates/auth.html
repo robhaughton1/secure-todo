@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% block body_class %}auth-page{% endblock %}
+{% block content %}
+{% include 'partials/public-nav.html' %}
+<main id="main" class="auth-layout">
+<section class="auth-panel" aria-labelledby="auth-title">
+<a class="back-link" href="{{ url_for('home') }}">
+<span aria-hidden="true">←</span> Back to your clearing</a>
+<div class="auth-form-content">
+<div class="auth-small-fox">
+<img src="{{ url_for('static', filename='images/fernward-mark.svg') }}" width="48" height="48" alt="">
+</div>
+<p class="eyebrow">
+{% block auth_eyebrow %}
+{% endblock %}
+</p>
+<h1 id="auth-title">
+{% block auth_title %}
+{% endblock %}
+</h1>
+<p class="auth-intro">
+{% block auth_intro %}
+{% endblock %}
+</p>
+{% block form %}
+{% endblock %}
+</div>
+<p class="auth-footnote">A little focus goes a long way.</p>
+</section>
+<aside class="auth-art" aria-label="Fernward woodland illustration">
+{% include 'partials/aurora.html' %}
+<div class="art-topline">
+<span>FIND YOUR CLEARING</span>
+<span aria-hidden="true">✦</span>
+</div>
+<div class="auth-art-copy">
+<h2>Good things grow<br>one step at a time.</h2>
+<p>Settle in. Take a breath. Begin again.</p>
+</div>
+<div class="art-orbit" aria-hidden="true">
+</div>
+<span class="floating-leaf leaf-one" aria-hidden="true">
+</span>
+<span class="floating-leaf leaf-two" aria-hidden="true">
+</span>
+<div class="art-checklist" aria-hidden="true">
+<span>YOUR NEXT CHAPTER</span>
+<i>✓ <b>A little room to think</b>
+</i>
+<i>○ <b>Something to look forward to</b>
+</i>
+<i>○ <b>One step at a time</b>
+</i>
+</div>
+<img class="auth-fox" src="{{ url_for('static', filename='images/fernward-fox.svg') }}" width="460" height="420" alt="The Fernward fox sitting quietly beside a fern-shaped tail">
+<p class="art-bottom">A small companion for your big ideas. <span aria-hidden="true">↗</span>
+</p>
+</aside>
+</main>
+{% endblock %}

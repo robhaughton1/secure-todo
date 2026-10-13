@@ -1,0 +1,9 @@
+<header class="public-header">
+{% include 'partials/brand.html' %}
+<nav aria-label="Main navigation">
+{% include 'partials/theme-toggle.html' %}
+<a class="nav-login" href="{{ url_for('login') }}">Log in</a>
+<a class="button button-small" href="{{ url_for('register') }}">Get started <span aria-hidden="true">↗</span>
+</a>
+</nav>
+</header>
