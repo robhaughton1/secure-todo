@@ -40,17 +40,9 @@ h1, h2, h3 { font-family: Georgia, "Times New Roman", serif; letter-spacing: -.0
 .button:disabled { opacity: 1; background: var(--surface-soft); color: var(--muted); border-color: var(--line); box-shadow: none; }
 :root[data-theme=dark] .button:disabled { color: var(--muted); }
 .theme-toggle { background: var(--paper); border-color: var(--line); }
-.aurora { opacity: .55; }
-.aurora span { filter: blur(90px); opacity: .5; animation-duration: 61s, 73s; }
-.landing-atmosphere .aurora { opacity: .35; }
-.landing-atmosphere { z-index: -1; }
 .public-header { padding-top: 24px; }
-.hero { gap: 25px; }
 .hero h1 { font-family: Georgia, serif; font-size: clamp(44px, 5.1vw, 74px); font-weight: 400; letter-spacing: -.06em; line-height: 1.12; }
-.hero h1 em { color: var(--sage); }
 .hero-description { font-size: 17px; max-width: 460px; line-height: 1.9; }
-.hero-fox { width: 85%; max-width: 420px; margin-top: 45px; }
-.hero-scene { min-height: 510px; }
 .scene-orbit { width: 74%; height: 370px; aspect-ratio: auto; border-radius: 12px 25px 25px 12px; border: 1px solid var(--line); background: repeating-linear-gradient(transparent 0 29px, var(--paper-rule) 29px 30px), var(--paper); box-shadow: 10px 16px 35px #71573812; transform: rotate(7deg); top: 40px; left: 18%; }
 .scene-orbit:before { content: ""; position: absolute; height: 45px; width: 100px; top: -16px; left: 30%; background: #bdadc37a; transform: rotate(-8deg); }
 .scene-orbit:after { inset: 12px auto 12px 18px; width: 1px; border: 0; border-left: 1px solid #b8808530; border-radius: 0; }

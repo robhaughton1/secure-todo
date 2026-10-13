@@ -216,7 +216,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible {
 .text-link:hover,.nav-login:hover {
   color:var(--accent)
 }
-/* Transform AND border-radius morphs produce flowing color fields. Separate timings prevent a short shared loop. */
+/* Transform drift complements the overlapping SVG waves without repainting shape geometry. */
 .aurora {
   position:absolute;
   inset:0;
@@ -231,7 +231,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible {
   border-radius:45% 55% 62% 38%;
   opacity:.8;
   will-change:transform;
-  animation:aurora-drift 29s ease-in-out infinite alternate,aurora-morph 37s ease-in-out infinite alternate;
+  animation:aurora-drift 61s ease-in-out infinite alternate;
   width:75%;
   height:90%
 }
@@ -244,21 +244,21 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible {
   background:#d7bcc7;
   left:45%;
   top:-25%;
-  animation-duration:41s,47s;
+  animation-duration:61s;
   animation-delay:-17s
 }
 .aurora span:nth-child(3) {
   background:#b7c9b7;
   left:30%;
   top:45%;
-  animation-duration:33s,43s;
+  animation-duration:61s;
   animation-delay:-11s
 }
 .aurora span:nth-child(4) {
   background:#f0e3c8;
   left:-15%;
   top:50%;
-  animation-duration:39s,31s;
+  animation-duration:61s;
   animation-delay:-23s
 }
 .aurora:after {
@@ -285,17 +285,6 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible {
   }
   100% {
     transform:translate(-8%,23%) rotate(30deg) scale(.95,1.2)
-  }
-}
-@keyframes aurora-morph {
-  0% {
-    border-radius:45% 55% 62% 38%
-  }
-  50% {
-    border-radius:65% 35% 38% 62%
-  }
-  100% {
-    border-radius:35% 65% 68% 32%
   }
 }
 .landing-page {
