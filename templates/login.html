@@ -16,11 +16,13 @@
 {% endif %}
 <div class="form-field">
 <label for="username">Username</label>
-<input type="text" id="username" name="username" placeholder="Enter your username" autocomplete="username" value="{{ username | default('', true) }}" {% if error %}aria-describedby="form-error"{% endif %} required>
+<input type="text" id="username" name="username" placeholder="Enter your username" autocomplete="username" value="{{ username | default('', true) }}" data-required-message="Enter your username." {% if error %}aria-describedby="form-error"{% endif %} required>
+<p class="field-error" id="username-required" hidden></p>
 </div>
 <div class="form-field">
 <label for="password">Password</label>
-<input type="password" id="password" name="password" placeholder="Enter your password" autocomplete="current-password" {% if error %}aria-describedby="form-error"{% endif %} required>
+<input type="password" id="password" name="password" placeholder="Enter your password" autocomplete="current-password" data-required-message="Enter your password." {% if error %}aria-describedby="form-error"{% endif %} required>
+<p class="field-error" id="password-required" hidden></p>
 </div>
 {% if show_captcha %}
 <div class="captcha-wrapper">

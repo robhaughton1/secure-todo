@@ -14,6 +14,16 @@ The curious fox holds a small journal, the cheerful fox has a cup of tea, and th
 
 Final-touch verification: all three ribbons' computed geometry changed between browser observations, and the companion message action changed the fox pose while real task controls remained disabled. All five pages again passed the 40 layout combinations across both themes and four target widths, with their SVG assets loaded. Form rendering/escaping contracts, JavaScript syntax and mascot SVG XML were rechecked. The existing live-authentication, OS-motion and performance-testing limitations below still apply.
 
+## Landscape, validation and wording polish
+
+The home-page forest now spans the full content viewport, including mobile, with a soft top fade into the aurora. Its former partial-width hard edge and sideways clipping are removed; the artwork reads as a continuous landscape rather than a placed image.
+
+Login and registration show required-field messages below the corresponding inputs, with an invalid border, `aria-invalid`, associated descriptions and focus on the first missing field. Correcting a field clears its local message and restores any existing server-error description. This presentation handles only native `valueMissing` failures. The `required` attributes, browser validity checks, form methods/actions, input names and server validation remain intact; no `novalidate` or programmatic submit bypass is introduced. With JavaScript unavailable, the browser’s original required-field UI remains the fallback. The password’s text is never read by this handler; it uses the browser validity state only.
+
+The wording review removed repeated small/little/gentle marketing phrases, clarified Create an account, Search tasks and task labels, trimmed redundant decorative sparkles/empty markup, and replaced the sample’s invented Gentle priority with Medium priority. An About Fernward link uses the existing About route. The cheerful fox’s description now correctly refers to its tea rather than a journal. The woodland/fox identity and interactive design previews remain intact.
+
+Verification: required errors appear on both forms without navigation, first-field focus is correct, and correcting the username clears only its own message. All five pages passed 40 responsive/theme combinations again, including registration with its errors visible. The forest covers the full content width at each target size; SVG images load and no horizontal overflow occurs. Existing Flask/Jinja form, CAPTCHA, username/error escaping and logout contract checks pass. Live authenticated submissions and Turnstile verification remain outside the temporary static preview.
+
 ## What changed in this revision
 
 Fernward now feels like a personal journal and woodland study nook. Warm cream and parchment surfaces, dusty mauve, soft lavender and sage replace the previous silver/indigo direction. Dark mode uses warm brown paper, cream text and a soft lamplight wash. Serif headings and small, local handwriting-style accents complement readable system-font controls. Texture is made from lightweight CSS gradients; there are no remote fonts or image dependencies.

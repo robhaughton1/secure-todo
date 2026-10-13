@@ -45,6 +45,35 @@
   document.querySelectorAll('.authForm').forEach(form => {
     form.addEventListener('focusin', () => document.body.classList.add('form-engaged'));
     form.addEventListener('focusout', event => { if (!form.contains(event.relatedTarget)) document.body.classList.remove('form-engaged'); });
+    /* Present native required-field failures inline; keep required and normal POST submission. */
+    const fields = [...form.querySelectorAll('[data-required-message]')];
+    const descriptions = new Map(fields.map(field => [field, field.getAttribute('aria-describedby') || '']));
+    let focusQueued = false;
+    form.addEventListener('invalid', event => {
+      const field = event.target;
+      if (!fields.includes(field) || !field.validity.valueMissing) return;
+      event.preventDefault();
+      const message = document.getElementById(`${field.id}-required`);
+      message.textContent = field.dataset.requiredMessage;
+      message.hidden = false;
+      field.setAttribute('aria-invalid', 'true');
+      field.setAttribute('aria-describedby', [descriptions.get(field), message.id].filter(Boolean).join(' '));
+      if (!focusQueued) {
+        focusQueued = true;
+        queueMicrotask(() => {
+          form.querySelector('[data-required-message][aria-invalid="true"]').focus();
+          focusQueued = false;
+        });
+      }
+    }, true);
+    fields.forEach(field => field.addEventListener('input', () => {
+      if (!field.validity.valid) return;
+      document.getElementById(`${field.id}-required`).hidden = true;
+      field.removeAttribute('aria-invalid');
+      const original = descriptions.get(field);
+      if (original) field.setAttribute('aria-describedby', original);
+      else field.removeAttribute('aria-describedby');
+    }));
   });
 
   /* Companion messages are chosen on request, never timed or tied to progress. */
@@ -52,11 +81,10 @@
   const companion = document.querySelector('[data-companion-message]');
   if (thought && companion) {
     const messages = [
-      'We can start small. I’ll keep you company.',
-      'There’s room for a pause, too.',
-      'A cup of tea and a fresh page. That sounds lovely.',
-      'Your pace is a perfectly good pace.',
-      'You don’t have to fill the whole page today.'
+      'I’ll keep you company.',
+      'Take a break when you need one.',
+      'Tea first, or a fresh page?',
+      'Keep a note for later.'
     ];
     let messageIndex = 0;
     thought.hidden = false;
@@ -66,7 +94,7 @@
       const fox = document.querySelector('[data-companion-fox]');
       if (fox) {
         fox.src = messageIndex % 2 ? fox.dataset.cheerful : fox.dataset.curious;
-        fox.alt = messageIndex % 2 ? 'Your fox companion waving a cheerful paw beside its journal' : 'Your fox companion tilting its head over a little journal';
+        fox.alt = messageIndex % 2 ? 'Your fox companion waving beside a cup of tea' : 'Your fox companion tilting its head over a journal';
         if (typeof fox.animate === 'function' && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
           fox.animate([{ transform: 'rotate(0)' }, { transform: 'rotate(-3deg) translateY(-3px)' }, { transform: 'rotate(0)' }], { duration: 650, easing: 'ease-out' });
         }

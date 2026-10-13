@@ -11,11 +11,13 @@
 {% endif %}
 <div class="form-field">
 <label for="username">Username</label>
-<input type="text" id="username" name="username" placeholder="Choose a username" autocomplete="username" {% if error %}aria-describedby="form-error"{% endif %} required>
+<input type="text" id="username" name="username" placeholder="Choose a username" autocomplete="username" data-required-message="Choose a username." {% if error %}aria-describedby="form-error"{% endif %} required>
+<p class="field-error" id="username-required" hidden></p>
 </div>
 <div class="form-field">
 <label for="password">Password</label>
-<input type="password" id="password" name="password" placeholder="Create a password" autocomplete="new-password" {% if error %}aria-describedby="form-error"{% endif %} required>
+<input type="password" id="password" name="password" placeholder="Create a password" autocomplete="new-password" data-required-message="Create a password." {% if error %}aria-describedby="form-error"{% endif %} required>
+<p class="field-error" id="password-required" hidden></p>
 </div>
 <button type="submit" id="registerButton" class="button authButton">Create account <span aria-hidden="true">↗</span>
 </button>
