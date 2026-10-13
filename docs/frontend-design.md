@@ -97,6 +97,10 @@ Created: `static/css/cozy.css`; `static/images/fernward-fox-curious.svg`; `stati
 The original PR also adds `templates/base.html`, `templates/auth.html`, shared brand/aurora/navigation/theme/icon/task-card partials, `static/js/theme.js`, the base fox and the brand mark. PR #7 remains the review location; it must remain unmerged.
 # Targeted UI refinement
 
+## Filter-free aurora ribbons
+
+Removed the remaining 10px filter from the oversized moving SVG wave surface. Ribbons now use lower-opacity vertical color gradients fading to transparency, keeping overlapping motion without blur rasterization. All aurora layers are now filter-free. Inspected the homepage and verified computed filter is none, three ribbons remain, no horizontal overflow, and Flask/Jinja contract checks pass. Native zoom/GPU frame timing remains unavailable; this removes a known rendering cost without claiming measured lag elimination. Fox artwork, animation, and backend behavior unchanged.
+
 ## Aurora rendering reduction
 
 Replaced four oversized, continuously animated, 55px-blurred color elements with static radial-gradient color washes in both themes. Removed their obsolete markup, keyframes, will-change hints, and theme/motion overrides. The original three overlapping moving SVG ribbons retain their soft 10px blur, timing, and reduced-motion behavior. This reduces the aurora's filtered surfaces from five to one and its continuously animated elements from seven to three; it does not eliminate all browser zoom repainting.

@@ -5,7 +5,7 @@
   :root:not([data-theme]) { --woodland-wash: #303a2b; --forest-ink: #c2d9ac; --fern-wash: #394932; --error: #e8bac1; --error-bg: #443136; --error-line: #76505b; }
 }
 .aurora { opacity: 1; background: radial-gradient(ellipse at 12% 8%, #aabce8cc, transparent 65%), radial-gradient(ellipse at 80% 20%, #a799d5cc, transparent 65%), radial-gradient(ellipse at 65% 85%, #97a9dfcc, transparent 65%), #d1d8ec; }
-.aurora-waves { position: absolute; inset: -20% -15%; width: 130%; height: 140%; max-width: none; filter: blur(10px); opacity: .8; overflow: visible; }
+.aurora-waves { position: absolute; inset: -20% -15%; width: 130%; height: 140%; max-width: none; opacity: .8; overflow: visible; }
 .aurora-wave { transform-origin: 50% 50%; animation: ribbon-blue 29s ease-in-out infinite alternate; }
 .wave-violet { animation-name: ribbon-violet; animation-duration: 37s; animation-delay: -13s; }
 .wave-silver { animation-name: ribbon-silver; animation-duration: 43s; animation-delay: -21s; }
