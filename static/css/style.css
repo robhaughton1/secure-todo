@@ -163,6 +163,27 @@ body {
     border-radius: 2px;
 }
 
+.login-btn {
+    display: inline-block;
+    padding: 12px 24px;
+    background-color: #76638F;
+    color: white;
+    border-radius: 12px;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.login-btn:hover {
+    background-color: #5D4B73;
+}
+
+/* Center Cloudflare Turnstile */
+.cf-turnstile {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
 
 /* ========================================
    FORM FIELDS

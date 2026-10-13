@@ -14,6 +14,8 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600&family=Nunito:wght@400;500;600&display=swap"
         rel="stylesheet">
+
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 </head>
 
 <body>
@@ -82,6 +84,7 @@
                             name="username"
                             placeholder="Enter your username"
                             autocomplete="username"
+                            value="{{ username | default('', true) }}"
                             required>
                     </div>
                 </div>
@@ -105,6 +108,12 @@
                             required>
                     </div>
                 </div>
+
+                <!-- Cloudflare Turnstile CAPTCHA -->
+                 {% if show_captcha %}
+                    <div class="cf-turnstile" data-sitekey="{{ turnstile_site_key }}">
+                    </div>
+                 {% endif %}
 
                 <!-- Login button -->
                 <div class="authButtonDiv">
