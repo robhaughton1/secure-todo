@@ -35,10 +35,28 @@
       <div class="journal-grid">
         <section class="task-workspace notebook" aria-labelledby="tasks-title">
           <div class="notebook-binding" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
-          <div class="task-section-heading"><div><p class="specimen-label">A PAGE FOR TODAY</p><h2 id="tasks-title">Your tasks <span class="soon-badge">Coming soon</span></h2></div><button class="button button-small" disabled aria-describedby="task-availability">＋ Add task</button></div>
-          <p id="task-availability" class="availability-note">Task controls will be available when task management launches.</p>
+          <div class="task-section-heading"><div><p class="specimen-label">A PAGE FOR TODAY</p><h2 id="tasks-title">Your tasks</h2></div></div>
+          <form action="{{ url_for('create_task') }}" method="POST" class="task-create-form">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+            <label for="new-task-title">New task</label>
+            <div class="task-create-controls">
+              <input id="new-task-title" name="title" type="text" maxlength="200" required placeholder="What would you like to do?">
+              <button class="button button-small" type="submit">＋ Add task</button>
+            </div>
+          </form>
           <div class="task-toolbar"><div class="search-field"><label class="sr-only" for="task-search">Search tasks (coming soon)</label><span aria-hidden="true">⌕</span><input id="task-search" type="search" placeholder="Search tasks" disabled></div><label class="filter-label">Status <select disabled><option>All statuses</option><option>Pending</option><option>Completed</option></select></label><label class="filter-label">Priority <select disabled><option>All priorities</option><option>High</option><option>Medium</option><option>Low</option></select></label></div>
+          {% if tasks %}
+          <ul class="task-list">
+            {% for task in tasks %}
+            <li class="task-list-item">
+              <span aria-hidden="true">☐</span>
+              <span>{{ task.title }}</span>
+            </li>
+            {% endfor %}
+          </ul>
+          {% else %}
           {% include 'partials/journal-empty.html' %}
+          {% endif %}
           <div class="notebook-footer"><span aria-hidden="true">✧</span> A fresh page, whenever you need one.</div>
         </section>
         <aside class="companion-nook" aria-labelledby="companion-title">
