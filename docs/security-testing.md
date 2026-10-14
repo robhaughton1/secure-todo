@@ -209,15 +209,15 @@ The normal logout response instructed the browser to delete the session cookie, 
 A separate tampering test changed the encoded user ID without generating a valid signature. Flask rejected that modified cookie, and the dashboard request redirected to login. **That is expected secure behavior, not a signature bypass.**
 
 ### Root cause
-Fernward currently uses Flask's default client-side, cryptographically signed sessions. The server can verify the cookie's signature and age, but it does not maintain an individual server-side session record to revoke when the user logs out. `session.clear()` causes the browser to discard its cookie; it does not invalidate other copies of the previously signed cookie.
+The original implementation used Flask's client-side signed session cookies without a server-side revocation record. Calling `session.clear()` on logout instructed the browser to discard its cookie, but a previously captured, correctly signed cookie remained acceptable until its normal expiration.
 
 ### Security impact and scope
-Someone who already obtained a valid, unexpired session cookie could potentially replay it after the legitimate user logs out. This finding **does not** show that an attacker can forge a signed cookie, guess the secret key, or access another account without first obtaining a valid credential. Testing was performed on local development accounts.
+Someone who had already obtained a valid, unexpired session cookie could replay it after the legitimate user logged out and regain access to `GET /dashboard`. This did **not** demonstrate cookie forgery, a bypass of Flask's signature verification, or a way to obtain another user's cookie. Testing was performed locally using project test accounts.
 
-### Evidence
-- Burp Suite: `POST /logout` response clearing the browser cookie (observed during testing).
+### Evidence of the original issue
+- Burp Suite: `POST /logout` response clearing the browser cookie.
 - Burp Suite Repeater: replay of the earlier valid cookie to `GET /dashboard`, receiving `200 OK` and dashboard HTML.
-- Burp Suite: modified/invalid cookie rejected with a redirect to login (separate control verification).
+- Burp Suite: a modified cookie with an invalid signature was rejected and redirected to login.
 
 #### Screenshots
 
@@ -225,16 +225,34 @@ Someone who already obtained a valid, unexpired session cookie could potentially
 
 ![Burp interception showing dashboard request and captured session cookie](evidence/Screenshot%202026-10-12%20174309.png)
 
-**Replayed cookie accepted by the dashboard:**
+**Replayed cookie accepted by the dashboard before remediation:**
 
 ![Burp Repeater GET dashboard with session cookie returning HTTP 200 and dashboard HTML](evidence/image%2820261012-214611%29.png)
 
-The Repeater screenshot demonstrates that the supplied cookie was accepted. The logout-then-replay ordering was observed during manual testing; capture both requests in one sequence if independently verifiable evidence is needed.
+The Repeater screenshot demonstrates acceptance of the supplied cookie. The logout-then-replay ordering was observed during manual testing; a single captured sequence of both requests would provide stronger independently verifiable evidence.
 
-### Planned remediation
-Consider server-side session records with revocable opaque session identifiers, or a server-validated session identifier/version that can be invalidated on logout. Require authentication checks to consult revocation state. Retest that a cookie captured before logout no longer grants dashboard access afterward, while a newly authenticated session still works.
+### Remediation
+Implemented in [PR #8](https://github.com/robhaughton1/secure-todo/pull/8) and merged into `main`.
 
-**Status:** Confirmed local session-replay behavior; remediation pending.
+- On successful login and registration, `create_authenticated_session()` generates a cryptographically random opaque session ID using `secrets.token_urlsafe(32)`.
+- Redis stores `fernward:session:<session_id>` mapped to the user ID with a **3600-second (one-hour) TTL**. Flask's signed cookie holds the user ID and opaque session ID.
+- The dashboard checks that both values exist and verifies that Redis still maps the session ID to the expected user. Missing or mismatched records cause a redirect to login.
+- `POST /logout` deletes the current Redis session record before clearing the Flask session cookie. A captured cookie cannot recreate the deleted Redis record.
+- Redis failures during session creation or dashboard validation return `503` rather than granting authenticated access. A Redis failure during logout returns `503` rather than claiming revocation succeeded.
+
+### Retest
+After implementing revocation, I repeated the original attack sequence using Burp Suite: authenticated, captured the signed cookie, logged out, and replayed that same cookie against `GET /dashboard`. The replayed cookie was rejected and the request redirected to the login page rather than returning the protected dashboard.
+
+During development, three local automated checks also passed: rejection of a cookie replayed after logout, creation of a valid session during registration, and denial of dashboard access when Redis validation raises a connection error. These test scripts were **not included in the merged PR**.
+
+### Remaining scope and limitations
+- The Redis session record expires after one hour, requiring a new authenticated session afterward.
+- Validation is currently implemented on the dashboard route; any additional protected endpoints must perform equivalent server-side validation.
+- Starting a new authenticated session does not currently revoke an earlier Redis session for the same browser. That older record may remain usable until logout explicitly revokes it or its TTL expires.
+- If Redis is unavailable during logout, revocation cannot be confirmed; the application returns an error instead of treating logout as successful.
+- This remediation addresses the demonstrated logout replay issue, not all possible session-management risks.
+
+**Status:** Remediated and retested locally; merged in PR #8.
 
 ---
 
