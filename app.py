@@ -327,6 +327,8 @@ def dashboard():
     user, error = authenticated_user()
     if error is not None:
         return error
+    if "csrf_token" not in session:
+        session["csrf_token"] = secrets.token_urlsafe(32)
     tasks = database.session.scalars(
         database.select(Task).where(Task.user_id == user.id).order_by(Task.id.desc())
     ).all()
