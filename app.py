@@ -7,6 +7,7 @@ import secrets
 from redis.exceptions import RedisError
 from dotenv import load_dotenv
 from flask import Flask, render_template, request, session, redirect, url_for
+from datetime import datetime, timezone
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_limiter import Limiter
@@ -125,6 +126,7 @@ def create_authenticated_session(user_id):
 
     session["user_id"] = user_id
     session["session_id"] = session_id
+    session["csrf_token"] = secrets.token_urlsafe(32)
     return True
 
 # Configure the SQLAlchemy database URI to use a SQLite database named 'secure_todo.db' 
@@ -139,6 +141,13 @@ class User(database.Model):
     id = database.Column(database.Integer, primary_key=True)
     username = database.Column(database.String(16), unique=True, nullable=False)
     password_hash = database.Column(database.String(255), nullable=False)
+
+class Task(database.Model):
+    id = database.Column(database.Integer, primary_key=True)
+    user_id = database.Column(database.Integer, database.ForeignKey('user.id'), nullable=False, index=True)
+    title = database.Column(database.String(200), nullable=False)
+    completed = database.Column(database.Boolean, nullable=False, default=False)
+    created_at = database.Column(database.DateTime, nullable=False, default=lambda: datetime.now(timezone.utc))
 
 DUMMY_HASH = generate_password_hash('random-dummy-password-hash')  # Generate a dummy hash for timing attack prevention
 
@@ -276,41 +285,55 @@ def register():
         return redirect(url_for('dashboard'))
     return render_template('register.html')
 
-@application.route('/dashboard')
-def dashboard():
-
-    # Check if the user is authenticated by checking the session for a user ID. If not authenticated, redirect to the login page. If authenticated, retrieve the user from the database and render the dashboard.html template with the user's username.
-    user_id = session.get('user_id')
-    session_id = session.get('session_id')
-
-    # Check if the session ID is valid by looking it up in Redis. If the session ID is not found or does not match the user ID, clear the session and redirect to the login page.
+def authenticated_user():
+    user_id = session.get("user_id")
+    session_id = session.get("session_id")
     if not user_id or not session_id:
-        return redirect(url_for('login'))
-
-    # Retrieve the stored user ID from Redis using the session ID. If the stored user ID does not match the user ID in the session, clear the session and redirect to the login page.
+        return None, redirect(url_for("login"))
     try:
-        stored_user_id = redis_client.get(
-            f"fernward:session:{session_id}"
-        )
+        stored_user_id = redis_client.get(f"fernward:session:{session_id}")
     except RedisError:
-        application.logger.error(
-            "Redis unavailable during session validation"
-        )
-        return "Authentication service temporarily unavailable.", 503
-
-    # If the stored user ID does not match the user ID in the session, clear the session and redirect to the login page.
+        application.logger.error("Redis unavailable during session validation")
+        return None, ("Authentication service temporarily unavailable.", 503)
     if stored_user_id != str(user_id):
         session.clear()
-        return redirect(url_for('login'))
-
-    # Retrieve the user from the database using the user ID. If the user is not found, clear the session and redirect to the login page.
+        return None, redirect(url_for("login"))
     user = database.session.get(User, user_id)
-
     if not user:
         session.clear()
-        return redirect(url_for('login'))
+        return None, redirect(url_for("login"))
+    return user, None
 
-    return render_template('dashboard.html', username=user.username)
+
+@application.route("/tasks", methods=["POST"])
+def create_task():
+    user, error = authenticated_user()
+    if error is not None:
+        return error
+    expected_token = session.get("csrf_token", "")
+    supplied_token = request.form.get("csrf_token", "")
+    if not expected_token or not hmac.compare_digest(expected_token, supplied_token):
+        return "Invalid request token.", 403
+    title = request.form.get("title", "").strip()
+    if not title or len(title) > 200:
+        return "Task title must be between 1 and 200 characters.", 400
+    database.session.add(Task(user_id=user.id, title=title))
+    database.session.commit()
+    return redirect(url_for("dashboard"), code=303)
+
+
+@application.route('/dashboard')
+def dashboard():
+    user, error = authenticated_user()
+    if error is not None:
+        return error
+    tasks = database.session.scalars(
+        database.select(Task).where(Task.user_id == user.id).order_by(Task.id.desc())
+    ).all()
+    return render_template(
+        'dashboard.html', username=user.username, tasks=tasks,
+        csrf_token=session["csrf_token"]
+    )
 
 # Error handler for rate limit exceeded (HTTP 429)
 @application.errorhandler(429)
