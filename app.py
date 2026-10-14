@@ -3,6 +3,8 @@ import hmac
 import hashlib
 import redis
 import requests
+import secrets
+from redis.exceptions import RedisError
 from dotenv import load_dotenv
 from flask import Flask, render_template, request, session, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
@@ -18,7 +20,10 @@ load_dotenv()
 limiter = Limiter(
     key_func=get_remote_address,
     app=application,
-    storage_uri="redis://127.0.0.1:6379/0"
+    storage_uri=os.environ.get(
+    "REDIS_URL",
+    "redis://127.0.0.1:6379/0"
+    )       
 )
 
 application.secret_key = os.environ['SECRET_KEY']  # Use the secret key for session management and security features in Flask
@@ -63,10 +68,8 @@ def captcha_required(username):
     return count is not None and int(count) >= 5
 
 # Initialize the Redis client for rate limiting and other caching purposes
-redis_client = redis.Redis(
-    host="127.0.0.1",
-    port=6379,
-    db=0,
+redis_client = redis.Redis.from_url(
+    os.environ.get("REDIS_URL", "redis://127.0.0.1:6379/0"),
     decode_responses=True
 )
 
@@ -104,8 +107,31 @@ def verify_turnstile(token):
     except (requests.RequestException, ValueError):
         return False
 
+def create_authenticated_session(user_id):
+    session.clear()
+    session_id = secrets.token_urlsafe(32)
+
+    try:
+        redis_client.set(
+            f"fernward:session:{session_id}",
+            str(user_id),
+            ex=3600
+        )
+    except RedisError:
+        application.logger.error(
+            "Redis unavailable during session creation"
+        )
+        return False
+
+    session["user_id"] = user_id
+    session["session_id"] = session_id
+    return True
+
 # Configure the SQLAlchemy database URI to use a SQLite database named 'secure_todo.db' 
-application.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///secure_todo.db'
+application.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
+    'DATABASE_URL',
+    'sqlite:///secure_todo.db'
+)
 database = SQLAlchemy(application)
 
 # Makes the database schema for the User model, which includes an id, username, and password_hash. The username is unique and cannot be null, while the password_hash isnt unique but also cannot be null. The id is the primary key for the User model.
@@ -179,16 +205,31 @@ def login():
             record_failed_login(username)
             return render_template('login.html', error='Invalid username or password.', turnstile_site_key=TURNSTILE_SITE_KEY, username=username, show_captcha=captcha_required(username)), 401
 
-        session.clear()  # Clear the session to prevent session fixation attacks
-        session['user_id'] = user.id  # Store the user's ID in the session for authentication purposes
+        # Create an authenticated session after successful login.
+        if not create_authenticated_session(user.id):
+            return "Authentication service temporarily unavailable.", 503
 
         return redirect(url_for('dashboard'))
     return render_template('login.html', turnstile_site_key=TURNSTILE_SITE_KEY)
 
-@application.route('/logout', methods = ['POST'])
+# Logout route logic, handling the POST request to log out the user. It deletes the session from Redis and clears the session data in Flask, then redirects to the home page.
+@application.route("/logout", methods=["POST"])
 def logout():
-    session.clear()  # Clear the session to log the user out
-    return redirect(url_for('home'))  # Redirect the user to the homepage after logging out
+    session_id = session.get("session_id")
+
+    if session_id:
+        try:
+            redis_client.delete(
+                f"fernward:session:{session_id}"
+            )
+        except RedisError:
+            application.logger.error(
+                "Redis unavailable during logout"
+            )
+            return "Logout temporarily unavailable. Please try again.", 503
+
+    session.clear()
+    return redirect(url_for("home"))
 
 # Register route logic, rendering the register.html template
 @application.route('/register', methods = ['GET', 'POST'])
@@ -228,20 +269,41 @@ def register():
         database.session.add(new_user)
         database.session.commit()
 
-        # Clear the previous session and authenticate the newly registered user
-        session.clear()
-        session['user_id'] = new_user.id
+        # Create an authenticated session for the newly registered user.
+        if not create_authenticated_session(new_user.id):
+            return "Authentication service temporarily unavailable.", 503
 
         return redirect(url_for('dashboard'))
     return render_template('register.html')
 
 @application.route('/dashboard')
 def dashboard():
-    user_id = session.get('user_id')
 
-    if not user_id:
+    # Check if the user is authenticated by checking the session for a user ID. If not authenticated, redirect to the login page. If authenticated, retrieve the user from the database and render the dashboard.html template with the user's username.
+    user_id = session.get('user_id')
+    session_id = session.get('session_id')
+
+    # Check if the session ID is valid by looking it up in Redis. If the session ID is not found or does not match the user ID, clear the session and redirect to the login page.
+    if not user_id or not session_id:
         return redirect(url_for('login'))
 
+    # Retrieve the stored user ID from Redis using the session ID. If the stored user ID does not match the user ID in the session, clear the session and redirect to the login page.
+    try:
+        stored_user_id = redis_client.get(
+            f"fernward:session:{session_id}"
+        )
+    except RedisError:
+        application.logger.error(
+            "Redis unavailable during session validation"
+        )
+        return "Authentication service temporarily unavailable.", 503
+
+    # If the stored user ID does not match the user ID in the session, clear the session and redirect to the login page.
+    if stored_user_id != str(user_id):
+        session.clear()
+        return redirect(url_for('login'))
+
+    # Retrieve the user from the database using the user ID. If the user is not found, clear the session and redirect to the login page.
     user = database.session.get(User, user_id)
 
     if not user:
