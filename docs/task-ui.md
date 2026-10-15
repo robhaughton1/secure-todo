@@ -12,6 +12,7 @@ The task notebook now has a styled creation form, wrapping titles, accessible tr
 - `static/js/interface.js`: load the task module only on the task workspace.
 - `static/css/tasks.css`: theme-aware task controls, states, mobile layout, focus-compatible styling.
 - `templates/partials/icons.html`, `design-sketchbook.html`, `journal-empty.html`: trash icon and concise, accurate preview copy.
+- `templates/home.html`, `templates/about.html`: removed obsolete task-management-coming-soon copy.
 - `tests/test_tasks.py`: eight standard-library unittest regressions using real Flask routes, in-memory SQLite, and mocked Redis.
 
 ## Behavior and security
