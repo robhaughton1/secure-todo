@@ -6,7 +6,7 @@ import requests
 import secrets
 from redis.exceptions import RedisError
 from dotenv import load_dotenv
-from flask import Flask, render_template, request, session, redirect, url_for
+from flask import Flask, render_template, request, session, redirect, url_for, jsonify, make_response
 from datetime import datetime, timezone
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -305,13 +305,40 @@ def authenticated_user():
     return user, None
 
 # Route to create a new task for the authenticated user. It checks for CSRF token validity, validates the task title, and adds the task to the database.
+def task_json_requested():
+    return request.accept_mimetypes.best_match(
+        ["text/html", "application/json"]
+    ) == "application/json"
+
+
+def task_error(message, status):
+    if task_json_requested():
+        return jsonify(error=message), status
+    return message, status
+
+
+def task_auth_error(error):
+    if not task_json_requested():
+        return error
+    response = make_response(error)
+    if 300 <= response.status_code < 400:
+        return task_error("Your session has expired. Please log in again.", 401)
+    return task_error(response.get_data(as_text=True), response.status_code)
+
+
+def task_payload(task):
+    return {"id": task.id, "title": task.title, "completed": task.completed,
+            "toggle_url": url_for("toggle_task", task_id=task.id),
+            "delete_url": url_for("delete_task", task_id=task.id)}
+
+
 @application.route("/tasks", methods=["POST"])
 def create_task():
     # Check if the user is authenticated and retrieve the user object. If the user is not authenticated, return an error response.
     user, error = authenticated_user()
 
     if error is not None:
-        return error
+        return task_auth_error(error)
     
     # Retrieve the expected CSRF token from the session and the supplied CSRF token from the form submission. If they do not match, return a 403 Forbidden response indicating an invalid request token.
     expected_token = session.get("csrf_token", "")
@@ -319,16 +346,19 @@ def create_task():
 
     # Check if the expected CSRF token from the session matches the supplied CSRF token from the form submission. If they do not match, return a 403 Forbidden response indicating an invalid request token.
     if not expected_token or not hmac.compare_digest(expected_token, supplied_token):
-        return "Invalid request token.", 403
+        return task_error("Invalid request token.", 403)
 
     # Retrieve the task title from the form submission, strip any leading or trailing whitespace, and validate its length. If the title is empty or exceeds 200 characters, return a 400 Bad Request response indicating that the task title must be between 1 and 200 characters.
     title = request.form.get("title", "").strip()
     if not title or len(title) > 200:
-        return "Task title must be between 1 and 200 characters.", 400
+        return task_error("Task title must be between 1 and 200 characters.", 400)
     
-    database.session.add(Task(user_id=user.id, title=title))
+    task = Task(user_id=user.id, title=title)
+    database.session.add(task)
     database.session.commit()
 
+    if task_json_requested():
+        return jsonify(task=task_payload(task)), 201
     return redirect(url_for("dashboard"), code=303)
 
 # Route to toggle the completion status of a task for the authenticated user. It checks for CSRF token validity, retrieves the task from the database, and updates its completion status.
@@ -337,7 +367,7 @@ def toggle_task(task_id):
     user, error = authenticated_user()
 
     if error is not None:
-        return error
+        return task_auth_error(error)
 
     expected_token = session.get("csrf_token", "")
     supplied_token = request.form.get("csrf_token", "")
@@ -345,7 +375,7 @@ def toggle_task(task_id):
     if not expected_token or not hmac.compare_digest(
         expected_token, supplied_token
     ):
-        return "Invalid request token.", 403
+        return task_error("Invalid request token.", 403)
 
     # Retrieve the task from the database based on the provided task_id and the authenticated user's id. If the task is not found, return a 404 Not Found response indicating that the task does not exist.
     task = database.session.scalar(
@@ -356,11 +386,13 @@ def toggle_task(task_id):
     )
 
     if task is None:
-        return "Task not found.", 404
+        return task_error("Task not found.", 404)
 
     task.completed = not task.completed
     database.session.commit()
 
+    if task_json_requested():
+        return jsonify(task=task_payload(task))
     return redirect(url_for("dashboard"), code=303)
 
 # Route to delete a task for the authenticated user. It checks for CSRF token validity, retrieves the task from the database, and deletes it if found.
@@ -369,7 +401,7 @@ def delete_task(task_id):
     user, error = authenticated_user()
 
     if error is not None:
-        return error
+        return task_auth_error(error)
 
     expected_token = session.get("csrf_token", "")
     supplied_token = request.form.get("csrf_token", "")
@@ -377,7 +409,7 @@ def delete_task(task_id):
     if not expected_token or not hmac.compare_digest(
         expected_token, supplied_token
     ):
-        return "Invalid request token.", 403
+        return task_error("Invalid request token.", 403)
 
     task = database.session.scalar(
         database.select(Task).where(
@@ -387,11 +419,20 @@ def delete_task(task_id):
     )
 
     if task is None:
-        return "Task not found.", 404
+        return task_error("Task not found.", 404)
+
+    # A confirmation page preserves explicit consent without JavaScript too.
+    if request.form.get("confirm_delete") != "yes":
+        if task_json_requested():
+            return task_error("Please confirm deletion.", 400)
+        return render_template("task-delete-confirm.html", task=task,
+                               csrf_token=expected_token)
 
     database.session.delete(task)
     database.session.commit()
 
+    if task_json_requested():
+        return jsonify(deleted_id=task_id)
     return redirect(url_for("dashboard"), code=303)
 
 
@@ -426,3 +467,4 @@ if __name__ == '__main__':
         database.create_all()  # Create the database tables if they don't exist
 
     application.run(debug=True)
+
