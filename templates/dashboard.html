@@ -44,7 +44,7 @@
             </div>
           </form>
           <p class="task-feedback" data-task-status role="status" aria-live="polite" aria-atomic="true"></p>
-          <p class="task-feedback task-error" data-task-error role="alert" hidden></p>
+          <p id="task-error" class="task-feedback task-error" data-task-error role="alert" hidden>{{ icon('warning') }}<span data-task-error-text></span></p>
           <!-- Task toolbar -->
           <div class="task-toolbar">
             <div class="search-field">

@@ -6,7 +6,9 @@
 .task-create-controls input::placeholder { color: var(--muted); }
 .task-feedback { margin: 0 28px; font-size: 13px; overflow-wrap: anywhere; }
 [data-task-status] { min-height: 23px; color: var(--muted); }
-.task-error { padding: 12px; margin-bottom: 12px; color: var(--error); background: var(--error-bg); border: 1px solid var(--error-line); border-radius: 10px; }
+.task-error { display: flex; align-items: flex-start; gap: 9px; padding: 12px; margin-bottom: 12px; color: var(--error); background: var(--error-bg); border: 1px solid var(--error-line); border-radius: 10px; }
+.task-error .icon { flex: 0 0 20px; }
+.task-create-controls input[aria-invalid=true] { border-color: var(--error); box-shadow: 0 0 0 2px var(--error-bg); }
 .task-list { list-style: none; padding: 0 28px 24px; margin: 0; }
 .task-list-item { display: flex; align-items: center; gap: 12px; padding: 13px 0; border-bottom: 1px solid var(--line); transition: background-color .15s; }
 .task-list-item:last-child { border-bottom: 0; }

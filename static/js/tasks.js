@@ -11,9 +11,30 @@ export function initializeTasks() {
   const dialog = workspace.querySelector('[data-delete-dialog]');
   const busy = new WeakSet();
   let pendingDelete;
+  let titleInvalid = false;
+  const titleDescription = input.getAttribute('aria-describedby');
 
   const announce = message => { status.textContent = message; };
-  const showError = message => { error.textContent = message; error.hidden = !message; };
+  const showError = message => { error.querySelector('[data-task-error-text]').textContent = message; error.hidden = !message; };
+  const titleError = () => {
+    titleInvalid = true;
+    input.setAttribute('aria-invalid', 'true');
+    input.setAttribute('aria-describedby', [titleDescription, error.id].filter(Boolean).join(' '));
+    announce(''); showError('Enter a task title.'); input.focus();
+  };
+  input.addEventListener('invalid', event => {
+    if (!input.validity.valueMissing) return;
+    event.preventDefault();
+    titleError();
+  });
+  input.addEventListener('input', () => {
+    if (!titleInvalid || !input.value.trim()) return;
+    titleInvalid = false;
+    input.removeAttribute('aria-invalid');
+    if (titleDescription) input.setAttribute('aria-describedby', titleDescription);
+    else input.removeAttribute('aria-describedby');
+    showError('');
+  });
   const syncEmpty = () => { const hasTasks = !!list.children.length; list.hidden = !hasTasks; empty.hidden = hasTasks; };
   const setBusy = (element, value) => {
     element.setAttribute('aria-busy', String(value));
@@ -53,6 +74,7 @@ export function initializeTasks() {
   create.addEventListener('submit', async event => {
     event.preventDefault();
     if (busy.has(create)) return;
+    if (!input.value.trim()) { titleError(); return; }
     const data = new FormData(create);
     showError('');
     setBusy(create, true);

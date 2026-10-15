@@ -1,5 +1,7 @@
 # Task interface refinement
 
+Latest input/auth polish: native empty-task failures and whitespace-only submissions get a styled inline warning and an associated invalid-field state, cleared when corrected. Backend title validation remains authoritative. Task warnings retain the shared SVG icon when messages change. Login/register replace the repeated small brand mark with an original fern-and-open-journal SVG and remove the top “Come in. Get comfortable.” banner; the main navigation logo is unchanged. Eight route tests, JS syntax, XML, and template checks pass. This pass's localhost browser preview timed out, so visual validation of these final touches remains manual.
+
 The task notebook now has a styled creation form, wrapping titles, accessible trash controls, and muted completed rows. Decorative and repeated captions were trimmed; the woodland header, fox interactions, unavailable filters/navigation, growth illustration, and sketchbook remain. The sketchbook clearly identifies unsaved design examples; it no longer says real task management is unavailable.
 
 ## Files
