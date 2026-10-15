@@ -467,4 +467,3 @@ if __name__ == '__main__':
         database.create_all()  # Create the database tables if they don't exist
 
     application.run(debug=True)
-
