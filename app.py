@@ -304,21 +304,94 @@ def authenticated_user():
         return None, redirect(url_for("login"))
     return user, None
 
-
+# Route to create a new task for the authenticated user. It checks for CSRF token validity, validates the task title, and adds the task to the database.
 @application.route("/tasks", methods=["POST"])
 def create_task():
+    # Check if the user is authenticated and retrieve the user object. If the user is not authenticated, return an error response.
     user, error = authenticated_user()
+
     if error is not None:
         return error
+    
+    # Retrieve the expected CSRF token from the session and the supplied CSRF token from the form submission. If they do not match, return a 403 Forbidden response indicating an invalid request token.
     expected_token = session.get("csrf_token", "")
     supplied_token = request.form.get("csrf_token", "")
+
+    # Check if the expected CSRF token from the session matches the supplied CSRF token from the form submission. If they do not match, return a 403 Forbidden response indicating an invalid request token.
     if not expected_token or not hmac.compare_digest(expected_token, supplied_token):
         return "Invalid request token.", 403
+
+    # Retrieve the task title from the form submission, strip any leading or trailing whitespace, and validate its length. If the title is empty or exceeds 200 characters, return a 400 Bad Request response indicating that the task title must be between 1 and 200 characters.
     title = request.form.get("title", "").strip()
     if not title or len(title) > 200:
         return "Task title must be between 1 and 200 characters.", 400
+    
     database.session.add(Task(user_id=user.id, title=title))
     database.session.commit()
+
+    return redirect(url_for("dashboard"), code=303)
+
+# Route to toggle the completion status of a task for the authenticated user. It checks for CSRF token validity, retrieves the task from the database, and updates its completion status.
+@application.route("/tasks/<int:task_id>/toggle", methods=["POST"])
+def toggle_task(task_id):
+    user, error = authenticated_user()
+
+    if error is not None:
+        return error
+
+    expected_token = session.get("csrf_token", "")
+    supplied_token = request.form.get("csrf_token", "")
+
+    if not expected_token or not hmac.compare_digest(
+        expected_token, supplied_token
+    ):
+        return "Invalid request token.", 403
+
+    # Retrieve the task from the database based on the provided task_id and the authenticated user's id. If the task is not found, return a 404 Not Found response indicating that the task does not exist.
+    task = database.session.scalar(
+        database.select(Task).where(
+            Task.id == task_id,
+            Task.user_id == user.id
+        )
+    )
+
+    if task is None:
+        return "Task not found.", 404
+
+    task.completed = not task.completed
+    database.session.commit()
+
+    return redirect(url_for("dashboard"), code=303)
+
+# Route to delete a task for the authenticated user. It checks for CSRF token validity, retrieves the task from the database, and deletes it if found.
+@application.route("/tasks/<int:task_id>/delete", methods=["POST"])
+def delete_task(task_id):
+    user, error = authenticated_user()
+
+    if error is not None:
+        return error
+
+    expected_token = session.get("csrf_token", "")
+    supplied_token = request.form.get("csrf_token", "")
+
+    if not expected_token or not hmac.compare_digest(
+        expected_token, supplied_token
+    ):
+        return "Invalid request token.", 403
+
+    task = database.session.scalar(
+        database.select(Task).where(
+            Task.id == task_id,
+            Task.user_id == user.id
+        )
+    )
+
+    if task is None:
+        return "Task not found.", 404
+
+    database.session.delete(task)
+    database.session.commit()
+
     return redirect(url_for("dashboard"), code=303)
 
 
