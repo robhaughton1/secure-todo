@@ -1,3 +1,5 @@
+import { focusConnected, trackRequestFocus } from './task-focus.js';
+
 export function initializeTasks() {
   const workspace = document.querySelector('[data-task-workspace]');
   if (!workspace || !window.fetch || !window.FormData) return;
@@ -76,6 +78,7 @@ export function initializeTasks() {
     if (busy.has(create)) return;
     if (!input.value.trim()) { titleError(); return; }
     const data = new FormData(create);
+    const restoreFocus = trackRequestFocus(create);
     showError('');
     setBusy(create, true);
     announce('Adding task…');
@@ -88,7 +91,7 @@ export function initializeTasks() {
       syncEmpty();
       announce('Task added.');
     } catch (failure) { announce(''); showError(failure.message); }
-    finally { setBusy(create, false); input.focus(); }
+    finally { setBusy(create, false); restoreFocus(input); }
   });
 
   const toggle = async form => {
@@ -97,6 +100,7 @@ export function initializeTasks() {
     const checkbox = form.querySelector('input[type=checkbox]');
     const previous = row.classList.contains('is-complete');
     const data = new FormData(form);
+    const restoreFocus = trackRequestFocus(row);
     row.classList.toggle('is-complete', checkbox.checked);
     showError('');
     setBusy(row, true);
@@ -109,7 +113,7 @@ export function initializeTasks() {
       checkbox.checked = previous;
       row.classList.toggle('is-complete', previous);
       announce(''); showError(failure.message);
-    } finally { setBusy(row, false); checkbox.focus(); }
+    } finally { setBusy(row, false); restoreFocus(checkbox); }
   };
   list.addEventListener('change', event => {
     if (event.target.matches('[data-task-toggle] input[type=checkbox]')) toggle(event.target.form);
@@ -118,6 +122,8 @@ export function initializeTasks() {
     const row = form.closest('[data-task-row]');
     if (busy.has(row)) return;
     const data = new FormData(form);
+    // Explicit dialog confirmation hands focus back to this row until the user moves.
+    const restoreFocus = trackRequestFocus(row, true);
     data.set('confirm_delete', 'yes');
     showError(''); setBusy(row, true); announce('Deleting task…');
     try {
@@ -125,10 +131,11 @@ export function initializeTasks() {
       if (String(payload.deleted_id) !== row.dataset.taskId) throw new Error('Unexpected server response. Reload to check your tasks.');
       const next = row.nextElementSibling || row.previousElementSibling;
       row.remove(); syncEmpty(); announce('Task deleted.');
-      (next?.querySelector('input[type=checkbox]') || input).focus();
+      const candidates = [next?.querySelector('input[type=checkbox]'), ...list.querySelectorAll('input[type=checkbox]'), input];
+      restoreFocus(candidates.find(control => control?.isConnected && !control.disabled));
     } catch (failure) {
       announce(''); showError(failure.message); setBusy(row, false);
-      form.querySelector('button').focus();
+      restoreFocus(form.querySelector('button'));
     }
   };
   const confirm = form => {
@@ -142,15 +149,26 @@ export function initializeTasks() {
     dialog.showModal();
     dialog.querySelector('[data-delete-cancel]').focus();
   };
-  dialog.querySelector('[data-delete-cancel]').addEventListener('click', () => dialog.close());
-  dialog.querySelector('[data-delete-confirm]').addEventListener('click', () => {
+  const closeDialog = confirmed => {
     const form = pendingDelete;
+    pendingDelete = undefined;
     dialog.close();
-    if (form) remove(form);
+    if (!form?.isConnected) return;
+    if (confirmed) remove(form);
+    else focusConnected(form.querySelector('button'));
+  };
+  dialog.querySelector('[data-delete-cancel]').addEventListener('click', () => closeDialog(false));
+  dialog.addEventListener('cancel', event => {
+    event.preventDefault();
+    closeDialog(false);
+  });
+  dialog.querySelector('[data-delete-confirm]').addEventListener('click', () => {
+    closeDialog(true);
   });
   dialog.addEventListener('close', () => {
-    pendingDelete?.querySelector('button').focus();
+    const form = pendingDelete;
     pendingDelete = undefined;
+    if (form?.isConnected) focusConnected(form.querySelector('button'));
   });
   list.addEventListener('submit', event => {
     if (event.target.matches('[data-task-toggle]')) { event.preventDefault(); toggle(event.target); }

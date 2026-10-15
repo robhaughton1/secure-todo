@@ -10,12 +10,8 @@
     <div class="sidebar-brand">{% include 'partials/brand.html' %}</div>
     <nav aria-label="Workspace">
       <a class="sidebar-link active" href="{{ url_for('dashboard') }}" aria-current="page">{{ icon('tasks') }} Tasks</a>
-      {% for icon_name, label in [('tasks', 'All Tasks'), ('today', 'Today'), ('upcoming', 'Upcoming'), ('completed', 'Completed')] %}
-      <span class="sidebar-link unavailable" aria-disabled="true">{{ icon(icon_name) }} {{ label }} <small>Soon</small></span>
-      {% endfor %}
     </nav>
     <div class="sidebar-bottom">
-      <span class="sidebar-link unavailable" aria-disabled="true">{{ icon('settings') }} Settings <small>Soon</small></span>
       <form action="{{ url_for('logout') }}" method="POST"><button class="sidebar-link logout" type="submit">{{ icon('logout') }} Log out</button></form>
     </div>
   </aside>
@@ -45,42 +41,6 @@
           </form>
           <p class="task-feedback" data-task-status role="status" aria-live="polite" aria-atomic="true"></p>
           <p id="task-error" class="task-feedback task-error" data-task-error role="alert" hidden>{{ icon('warning') }}<span data-task-error-text></span></p>
-          <!-- Task toolbar -->
-          <div class="task-toolbar">
-            <div class="search-field">
-              <label class="sr-only" for="task-search">
-                Search tasks (coming soon)
-              </label>
-
-              <span aria-hidden="true">⌕</span>
-
-              <input
-                id="task-search"
-                type="search"
-                placeholder="Search tasks"
-                disabled
-              >
-            </div>
-
-            <label class="filter-label">
-              Status
-              <select disabled>
-                <option>All statuses</option>
-                <option>Pending</option>
-                <option>Completed</option>
-              </select>
-            </label>
-
-            <label class="filter-label">
-              Priority
-              <select disabled>
-                <option>All priorities</option>
-                <option>High</option>
-                <option>Medium</option>
-                <option>Low</option>
-              </select>
-            </label>
-          </div>
           <ul class="task-list" data-task-list {% if not tasks %}hidden{% endif %}>
             {% for task in tasks %}{{ task_row(task, csrf_token) }}{% endfor %}
           </ul>

@@ -119,6 +119,37 @@ class TaskRoutes(unittest.TestCase):
         self.assertEqual(self.post(f'/tasks/{task.id}/toggle', json=False).status_code, 303)
         self.assertEqual(self.post(f'/tasks/{task.id}/delete', {'confirm_delete': 'yes'}, False).status_code, 303)
 
+    def test_dashboard_hidden_states_and_available_controls(self):
+        from html.parser import HTMLParser
+
+        class States(HTMLParser):
+            def __init__(self, html):
+                super().__init__()
+                self.states = {}
+                self.feed(html)
+
+            def handle_starttag(self, tag, attrs):
+                attrs = dict(attrs)
+                for key in ('data-task-error', 'data-task-list', 'data-task-empty'):
+                    if key in attrs:
+                        self.states[key] = 'hidden' in attrs
+
+        empty = self.client.get('/dashboard').get_data(as_text=True)
+        self.assertEqual(States(empty).states, {
+            'data-task-error': True, 'data-task-list': True, 'data-task-empty': False
+        })
+        self.assertNotIn('task-search', empty)
+        self.assertNotIn('<select', empty)
+        self.assertNotIn('sidebar-link unavailable', empty)
+        self.assertIn('Glad you’re here, owner.', empty)
+        self.task()
+        populated = self.client.get('/dashboard').get_data(as_text=True)
+        self.assertEqual(States(populated).states, {
+            'data-task-error': True, 'data-task-list': False, 'data-task-empty': True
+        })
+        self.assertIn('Apply change', populated)
+        self.assertNotIn('onchange=', populated)
+
     def test_expired_missing_and_unavailable_sessions(self):
         m = self.module
         task = self.task()
