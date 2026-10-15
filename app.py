@@ -12,6 +12,8 @@ from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
+from log_config import setup_logging, logger
+import logging
 
 # Initialize the Flask application and load environment variables from the .env file
 application = Flask(__name__)
@@ -38,6 +40,10 @@ USERNAME_HMAC_KEY = os.environ["USERNAME_HMAC_KEY"].encode("utf-8")
 TURNSTILE_SITE_KEY = os.environ["TURNSTILE_SITE_KEY"]
 TURNSTILE_SECRET_KEY = os.environ["TURNSTILE_SECRET_KEY"]
 
+# Function to set up the logger configuration
+setup_logging()
+
+
 # Function to generate a unique identifier for a given username using HMAC with SHA-256 hashing. This helps in securely identifying users without exposing their actual usernames.
 def get_username_identifier(username):
     normalized_username = username.strip()
@@ -52,6 +58,7 @@ def get_username_identifier(username):
 def record_failed_login(username):
     identifier = get_username_identifier(username)
     key = f"fernward:failed:{identifier}"
+    logger.info(f"failed login attempt {identifier}")
 
     count = increment_failed_attempts(
         keys=[key],
@@ -63,6 +70,7 @@ def record_failed_login(username):
 def captcha_required(username):
     identifier = get_username_identifier(username)
     key = f"fernward:failed:{identifier}"
+
 
     count = redis_client.get(key)
 
@@ -106,6 +114,7 @@ def verify_turnstile(token):
         return (result.get("success") is True and result.get("hostname") in {"localhost", "127.0.0.1"})
 
     except (requests.RequestException, ValueError):
+        logger.error("Failed to make a request to cloudflare for turnstile")
         return False
 
 def create_authenticated_session(user_id):
@@ -122,6 +131,7 @@ def create_authenticated_session(user_id):
         application.logger.error(
             "Redis unavailable during session creation"
         )
+        logger.error("Redis unavailable during session creation")
         return False
 
     session["user_id"] = user_id
@@ -136,7 +146,7 @@ application.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
 )
 database = SQLAlchemy(application)
 
-# Makes the database schema for the User model, which includes an id, username, and password_hash. The username is unique and cannot be null, while the password_hash isnt unique but also cannot be null. The id is the primary key for the User model.
+# Makes the database schema for the User model, which includes an id, username, and password_hash. The username is unique and cannot be null, while the password_hash isn't unique but also cannot be null. The id is the primary key for the User model.
 class User(database.Model):
     id = database.Column(database.Integer, primary_key=True)
     username = database.Column(database.String(16), unique=True, nullable=False)
@@ -235,6 +245,7 @@ def logout():
             application.logger.error(
                 "Redis unavailable during logout"
             )
+            logger.error("Redis unavailable during logout")
             return "Logout temporarily unavailable. Please try again.", 503
 
     session.clear()
@@ -278,8 +289,11 @@ def register():
         database.session.add(new_user)
         database.session.commit()
 
+        logger.info("Created new user")
+
         # Create an authenticated session for the newly registered user.
         if not create_authenticated_session(new_user.id):
+            logger
             return "Authentication service temporarily unavailable.", 503
 
         return redirect(url_for('dashboard'))
@@ -294,6 +308,7 @@ def authenticated_user():
         stored_user_id = redis_client.get(f"fernward:session:{session_id}")
     except RedisError:
         application.logger.error("Redis unavailable during session validation")
+        logger.error("Redis unavailable during session validation")
         return None, ("Authentication service temporarily unavailable.", 503)
     if stored_user_id != str(user_id):
         session.clear()
@@ -314,6 +329,7 @@ def task_json_requested():
 def task_error(message, status):
     if task_json_requested():
         return jsonify(error=message), status
+    logger.error(f"task error {status}")
     return message, status
 
 
@@ -459,6 +475,7 @@ def rate_limit_exceeded(error):
 @application.errorhandler(500)
 def internal_server_error(error):
     application.logger.error("Internal server error", exc_info=error.original_exception or error)
+    logger.error("Internal server error", exc_info=error.original_exception or error)
     return "Service temporarily unavailable. Please try again later.", 500
 
 # Run the application in debug mode and create the database tables if they don't exist

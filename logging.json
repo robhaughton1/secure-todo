@@ -1,0 +1,40 @@
+{
+    "version": 1,
+    "formatters": {
+        "console_formatter": {
+            "()": "color_log.ColorFormatter",
+            "format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+            "datefmt": "%Y-%m-%d %H:%M:%S"
+        },
+        "file_formatter": {
+            "class": "logging.Formatter",
+            "format": "%(asctime)s │ %(name)s - %(levelname)s - %(message)s",
+            "datefmt": "%Y-%m-%d %H:%M:%S"
+        }
+    },
+    "handlers": {
+      "handler": {
+        "class": "logging.StreamHandler",
+        "level": "DEBUG",
+        "formatter": "console_formatter",
+        "stream": "ext://sys.stdout"
+      },
+      "file_handler": {
+        "class": "logging.handlers.RotatingFileHandler",
+        "level": "DEBUG",
+        "formatter": "file_formatter",
+        "filename": "logs/fernward.log",
+        "maxBytes": 5000,
+        "backupCount": 3
+      }
+
+    },
+    "loggers": {
+        "logger": {
+            "level": "DEBUG",
+            "handlers": ["handler", "file_handler"]
+        }
+    },
+    "disable_existing_loggers": "False",
+    "filters": {}
+}
