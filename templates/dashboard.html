@@ -29,7 +29,7 @@
       <div class="journal-sky">
         {% include 'partials/aurora.html' %}
         <img class="woodland-view" src="{{ url_for('static', filename='images/woodland-clearing.svg') }}" width="900" height="360" alt="" aria-hidden="true">
-        <div class="journal-sky-copy"><div class="page-heading"><h1>Your tasks</h1><time data-current-date></time></div></div>
+        <div class="journal-sky-copy"><div class="page-heading"><h1>Your tasks</h1><time data-current-date></time></div><section class="journal-welcome" aria-labelledby="welcome-title"><h2 id="welcome-title">Glad you’re here, {{ username }}.</h2></section></div>
       </div>
       <div class="journal-grid">
         <section class="task-workspace notebook" aria-labelledby="tasks-title" data-task-workspace>
