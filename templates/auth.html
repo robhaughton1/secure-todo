@@ -7,13 +7,9 @@
 <a class="back-link" href="{{ url_for('home') }}">
 <span aria-hidden="true">←</span> Back to the front porch</a>
 <div class="auth-form-content">
-<div class="auth-small-fox">
-<img src="{{ url_for('static', filename='images/fernward-mark.svg') }}" width="48" height="48" alt="">
+<div class="auth-journal-art" aria-hidden="true">
+<img src="{{ url_for('static', filename='images/woodland-journal.svg') }}" width="116" height="82" alt="">
 </div>
-<p class="eyebrow">
-{% block auth_eyebrow %}
-{% endblock %}
-</p>
 <h1 id="auth-title">
 {% block auth_title %}
 {% endblock %}
@@ -30,13 +26,8 @@
 <aside class="auth-art" aria-label="Fernward woodland illustration">
 {% include 'partials/aurora.html' %}
 <img class="auth-woodland" src="{{ url_for('static', filename='images/woodland-clearing.svg') }}" width="900" height="360" alt="" aria-hidden="true">
-<div class="art-topline">
-<span>COME IN. GET COMFORTABLE.</span>
-<span aria-hidden="true">✦</span>
-</div>
 <div class="auth-art-copy">
-<h2>A fresh page.<br>A familiar friend.</h2>
-<p>There’s a cozy corner here with your name on it.</p>
+<h2>A familiar friend<br>for everyone.</h2>
 </div>
 <div class="art-orbit" aria-hidden="true">
 </div>

@@ -1,0 +1,60 @@
+/* Live task controls. Shared woodland artwork and theme tokens stay unchanged. */
+.task-create-form { padding: 25px 28px 12px; }
+.task-create-form > label { display: block; margin-bottom: 9px; font-size: 14px; font-weight: 600; }
+.task-create-controls { display: flex; align-items: stretch; gap: 10px; }
+.task-create-controls input { min-width: 0; flex: 1; width: 100%; background: var(--paper); color: var(--text); border: 1px solid var(--line); border-radius: 12px; padding: 13px 15px; }
+.task-create-controls input::placeholder { color: var(--muted); }
+.task-feedback { margin: 0 28px; font-size: 13px; overflow-wrap: anywhere; }
+[data-task-status] { min-height: 23px; color: var(--muted); }
+.task-error { display: flex; align-items: flex-start; gap: 9px; padding: 12px; margin-bottom: 12px; color: var(--error); background: var(--error-bg); border: 1px solid var(--error-line); border-radius: 10px; }
+/* Keep task visibility explicit even if component display rules change. */
+.task-error[hidden], .task-list[hidden], .task-empty[hidden] { display: none !important; }
+.task-error .icon { flex: 0 0 20px; }
+.task-create-controls input[aria-invalid=true] { border-color: var(--error); box-shadow: 0 0 0 2px var(--error-bg); }
+.task-list { list-style: none; padding: 0 28px 24px; margin: 0; }
+.task-list-item { display: flex; align-items: center; gap: 12px; padding: 13px 0; border-bottom: 1px solid var(--line); transition: background-color .15s; }
+.task-list-item:last-child { border-bottom: 0; }
+.task-list-item:hover { background: var(--surface-soft); }
+[data-task-toggle] { flex: 1; min-width: 0; }
+.task-check { display: flex; align-items: flex-start; gap: 12px; cursor: pointer; padding: 8px 0; }
+.task-check input { appearance: none; flex: 0 0 22px; width: 22px; height: 22px; margin: 1px 0 0; border: 1.5px solid var(--sage); border-radius: 6px; background: var(--paper); cursor: pointer; }
+.task-check input:checked { background: var(--sage) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='m6 12 4 4 8-8' fill='none' stroke='%23fffaf0' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/20px no-repeat; }
+:root[data-theme=dark] .task-check input:checked { background-color: #53684f; border-color: var(--sage); }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) .task-check input:checked { background-color: #53684f; border-color: var(--sage); }
+}
+.task-title { min-width: 0; overflow-wrap: anywhere; font-size: 15px; line-height: 1.65; }
+.is-complete .task-title { color: var(--muted); text-decoration: line-through; text-decoration-thickness: 1px; }
+.task-delete-button { display: inline-flex; align-items: center; justify-content: center; min-width: 44px; min-height: 44px; border: 0; border-radius: 10px; background: transparent; color: var(--muted); }
+.task-delete-button:hover { color: var(--error); background: var(--error-bg); }
+.task-save { min-height: 44px; padding: 5px 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--paper); color: var(--text); }
+.task-enhanced .task-save { display: none; }
+[aria-busy=true] { opacity: .7; }
+.task-empty { padding: 15px 25px 30px; }
+.task-empty img { width: 140px; height: 128px; object-fit: contain; }
+.task-empty p { margin-top: 8px; }
+.task-dialog, .delete-confirm-page { color: var(--text); background: var(--paper); border: 1px solid var(--line); border-radius: 20px; padding: 28px; width: min(440px, calc(100% - 36px)); box-shadow: var(--shadow); }
+.task-dialog::backdrop { background: #211b1870; }
+.task-dialog h2, .delete-confirm-page h1 { font-size: 27px; margin-bottom: 16px; }
+.task-dialog p, .delete-confirm-page p { margin-bottom: 12px; overflow-wrap: anywhere; }
+[data-delete-title] { font-weight: 600; }
+.dialog-actions { display: flex; justify-content: flex-end; align-items: center; gap: 12px; margin-top: 22px; }
+.dialog-cancel { display: inline-flex; align-items: center; min-height: 44px; padding: 10px 15px; border: 1px solid var(--line); border-radius: 12px; color: var(--text); background: var(--paper); text-decoration: none; }
+.danger-button { color: var(--error); border-color: var(--error-line); background: var(--error-bg); }
+.danger-button:hover:not(:disabled) { color: var(--error); background: var(--error-bg); }
+.delete-confirm-page { margin: 40px auto; }
+.dashboard-page .journal-sky { min-height: 140px; }
+.dashboard-page .companion-card { transform: none; }
+@media (max-width: 650px) {
+  .task-create-form { padding: 20px 20px 10px; }
+  .task-create-controls { flex-wrap: wrap; }
+  .task-create-controls input { flex-basis: 100%; }
+  .task-create-controls .button { width: 100%; }
+  .task-list { padding: 0 20px 20px; }
+  .task-feedback { margin-left: 20px; margin-right: 20px; }
+  .task-title { font-size: 14px; }
+  .dashboard-page .journal-sky-copy { padding-bottom: 18px; }
+}
+@media (forced-colors: active) {
+  .task-check input { appearance: auto; }
+}

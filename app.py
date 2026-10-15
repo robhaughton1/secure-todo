@@ -6,7 +6,8 @@ import requests
 import secrets
 from redis.exceptions import RedisError
 from dotenv import load_dotenv
-from flask import Flask, render_template, request, session, redirect, url_for
+from flask import Flask, render_template, request, session, redirect, url_for, jsonify, make_response
+from datetime import datetime, timezone
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_limiter import Limiter
@@ -125,6 +126,7 @@ def create_authenticated_session(user_id):
 
     session["user_id"] = user_id
     session["session_id"] = session_id
+    session["csrf_token"] = secrets.token_urlsafe(32)
     return True
 
 # Configure the SQLAlchemy database URI to use a SQLite database named 'secure_todo.db' 
@@ -139,6 +141,13 @@ class User(database.Model):
     id = database.Column(database.Integer, primary_key=True)
     username = database.Column(database.String(16), unique=True, nullable=False)
     password_hash = database.Column(database.String(255), nullable=False)
+
+class Task(database.Model):
+    id = database.Column(database.Integer, primary_key=True)
+    user_id = database.Column(database.Integer, database.ForeignKey('user.id'), nullable=False, index=True)
+    title = database.Column(database.String(200), nullable=False)
+    completed = database.Column(database.Boolean, nullable=False, default=False)
+    created_at = database.Column(database.DateTime, nullable=False, default=lambda: datetime.now(timezone.utc))
 
 DUMMY_HASH = generate_password_hash('random-dummy-password-hash')  # Generate a dummy hash for timing attack prevention
 
@@ -276,41 +285,171 @@ def register():
         return redirect(url_for('dashboard'))
     return render_template('register.html')
 
-@application.route('/dashboard')
-def dashboard():
-
-    # Check if the user is authenticated by checking the session for a user ID. If not authenticated, redirect to the login page. If authenticated, retrieve the user from the database and render the dashboard.html template with the user's username.
-    user_id = session.get('user_id')
-    session_id = session.get('session_id')
-
-    # Check if the session ID is valid by looking it up in Redis. If the session ID is not found or does not match the user ID, clear the session and redirect to the login page.
+def authenticated_user():
+    user_id = session.get("user_id")
+    session_id = session.get("session_id")
     if not user_id or not session_id:
-        return redirect(url_for('login'))
-
-    # Retrieve the stored user ID from Redis using the session ID. If the stored user ID does not match the user ID in the session, clear the session and redirect to the login page.
+        return None, redirect(url_for("login"))
     try:
-        stored_user_id = redis_client.get(
-            f"fernward:session:{session_id}"
-        )
+        stored_user_id = redis_client.get(f"fernward:session:{session_id}")
     except RedisError:
-        application.logger.error(
-            "Redis unavailable during session validation"
-        )
-        return "Authentication service temporarily unavailable.", 503
-
-    # If the stored user ID does not match the user ID in the session, clear the session and redirect to the login page.
+        application.logger.error("Redis unavailable during session validation")
+        return None, ("Authentication service temporarily unavailable.", 503)
     if stored_user_id != str(user_id):
         session.clear()
-        return redirect(url_for('login'))
-
-    # Retrieve the user from the database using the user ID. If the user is not found, clear the session and redirect to the login page.
+        return None, redirect(url_for("login"))
     user = database.session.get(User, user_id)
-
     if not user:
         session.clear()
-        return redirect(url_for('login'))
+        return None, redirect(url_for("login"))
+    return user, None
 
-    return render_template('dashboard.html', username=user.username)
+# Route to create a new task for the authenticated user. It checks for CSRF token validity, validates the task title, and adds the task to the database.
+def task_json_requested():
+    return request.accept_mimetypes.best_match(
+        ["text/html", "application/json"]
+    ) == "application/json"
+
+
+def task_error(message, status):
+    if task_json_requested():
+        return jsonify(error=message), status
+    return message, status
+
+
+def task_auth_error(error):
+    if not task_json_requested():
+        return error
+    response = make_response(error)
+    if 300 <= response.status_code < 400:
+        return task_error("Your session has expired. Please log in again.", 401)
+    return task_error(response.get_data(as_text=True), response.status_code)
+
+
+def task_payload(task):
+    return {"id": task.id, "title": task.title, "completed": task.completed,
+            "toggle_url": url_for("toggle_task", task_id=task.id),
+            "delete_url": url_for("delete_task", task_id=task.id)}
+
+
+@application.route("/tasks", methods=["POST"])
+def create_task():
+    # Check if the user is authenticated and retrieve the user object. If the user is not authenticated, return an error response.
+    user, error = authenticated_user()
+
+    if error is not None:
+        return task_auth_error(error)
+    
+    # Retrieve the expected CSRF token from the session and the supplied CSRF token from the form submission. If they do not match, return a 403 Forbidden response indicating an invalid request token.
+    expected_token = session.get("csrf_token", "")
+    supplied_token = request.form.get("csrf_token", "")
+
+    # Check if the expected CSRF token from the session matches the supplied CSRF token from the form submission. If they do not match, return a 403 Forbidden response indicating an invalid request token.
+    if not expected_token or not hmac.compare_digest(expected_token, supplied_token):
+        return task_error("Invalid request token.", 403)
+
+    # Retrieve the task title from the form submission, strip any leading or trailing whitespace, and validate its length. If the title is empty or exceeds 200 characters, return a 400 Bad Request response indicating that the task title must be between 1 and 200 characters.
+    title = request.form.get("title", "").strip()
+    if not title or len(title) > 200:
+        return task_error("Task title must be between 1 and 200 characters.", 400)
+    
+    task = Task(user_id=user.id, title=title)
+    database.session.add(task)
+    database.session.commit()
+
+    if task_json_requested():
+        return jsonify(task=task_payload(task)), 201
+    return redirect(url_for("dashboard"), code=303)
+
+# Route to toggle the completion status of a task for the authenticated user. It checks for CSRF token validity, retrieves the task from the database, and updates its completion status.
+@application.route("/tasks/<int:task_id>/toggle", methods=["POST"])
+def toggle_task(task_id):
+    user, error = authenticated_user()
+
+    if error is not None:
+        return task_auth_error(error)
+
+    expected_token = session.get("csrf_token", "")
+    supplied_token = request.form.get("csrf_token", "")
+
+    if not expected_token or not hmac.compare_digest(
+        expected_token, supplied_token
+    ):
+        return task_error("Invalid request token.", 403)
+
+    # Retrieve the task from the database based on the provided task_id and the authenticated user's id. If the task is not found, return a 404 Not Found response indicating that the task does not exist.
+    task = database.session.scalar(
+        database.select(Task).where(
+            Task.id == task_id,
+            Task.user_id == user.id
+        )
+    )
+
+    if task is None:
+        return task_error("Task not found.", 404)
+
+    task.completed = not task.completed
+    database.session.commit()
+
+    if task_json_requested():
+        return jsonify(task=task_payload(task))
+    return redirect(url_for("dashboard"), code=303)
+
+# Route to delete a task for the authenticated user. It checks for CSRF token validity, retrieves the task from the database, and deletes it if found.
+@application.route("/tasks/<int:task_id>/delete", methods=["POST"])
+def delete_task(task_id):
+    user, error = authenticated_user()
+
+    if error is not None:
+        return task_auth_error(error)
+
+    expected_token = session.get("csrf_token", "")
+    supplied_token = request.form.get("csrf_token", "")
+
+    if not expected_token or not hmac.compare_digest(
+        expected_token, supplied_token
+    ):
+        return task_error("Invalid request token.", 403)
+
+    task = database.session.scalar(
+        database.select(Task).where(
+            Task.id == task_id,
+            Task.user_id == user.id
+        )
+    )
+
+    if task is None:
+        return task_error("Task not found.", 404)
+
+    # A confirmation page preserves explicit consent without JavaScript too.
+    if request.form.get("confirm_delete") != "yes":
+        if task_json_requested():
+            return task_error("Please confirm deletion.", 400)
+        return render_template("task-delete-confirm.html", task=task,
+                               csrf_token=expected_token)
+
+    database.session.delete(task)
+    database.session.commit()
+
+    if task_json_requested():
+        return jsonify(deleted_id=task_id)
+    return redirect(url_for("dashboard"), code=303)
+
+
+@application.route('/dashboard')
+def dashboard():
+    user, error = authenticated_user()
+    if error is not None:
+        return error
+    if "csrf_token" not in session:
+        session["csrf_token"] = secrets.token_urlsafe(32)
+    tasks = database.session.scalars(
+        database.select(Task).where(Task.user_id == user.id).order_by(Task.id.desc())
+    ).all()
+    return render_template(
+        'dashboard.html', username=user.username, tasks=tasks,
+        csrf_token=session["csrf_token"]
+    )
 
 # Error handler for rate limit exceeded (HTTP 429)
 @application.errorhandler(429)

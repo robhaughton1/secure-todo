@@ -1,53 +1,74 @@
 {% extends 'base.html' %}
 {% from 'partials/icons.html' import icon %}
-{% block title %}Fernward | Your journal{% endblock %}
+{% from 'partials/live-task.html' import task_row %}
+{% block title %}Fernward | Tasks{% endblock %}
 {% block body_class %}dashboard-page{% endblock %}
+{% block head %}<link rel="stylesheet" href="{{ url_for('static', filename='css/tasks.css') }}">{% endblock %}
 {% block content %}
 <div class="dashboard-layout">
   <aside class="sidebar" id="workspace-nav">
     <div class="sidebar-brand">{% include 'partials/brand.html' %}</div>
-    <p class="nav-caption">YOUR LITTLE NOOK</p>
     <nav aria-label="Workspace">
-      <a class="sidebar-link active" href="{{ url_for('dashboard') }}" aria-current="page">{{ icon('dashboard') }} My journal</a>
-      {% for icon_name, label in [('tasks','All Tasks'),('today','Today'),('upcoming','Upcoming'),('completed','Completed')] %}
-      <span class="sidebar-link unavailable" aria-disabled="true">{{ icon(icon_name) }} {{ label }} <small>Soon</small></span>
-      {% endfor %}
+      <a class="sidebar-link active" href="{{ url_for('dashboard') }}" aria-current="page">{{ icon('tasks') }} Tasks</a>
     </nav>
     <div class="sidebar-bottom">
-      <div class="sidebar-note"><img src="{{ url_for('static', filename='images/fernward-mark.svg') }}" width="32" height="32" alt=""><p>A fresh page.<br><strong>Your own pace.</strong></p></div>
-      <span class="sidebar-link unavailable" aria-disabled="true">{{ icon('settings') }} Settings <small>Soon</small></span>
       <form action="{{ url_for('logout') }}" method="POST"><button class="sidebar-link logout" type="submit">{{ icon('logout') }} Log out</button></form>
     </div>
   </aside>
   <div class="workspace">
     <header class="workspace-header">
       <button class="menu-toggle" type="button" data-menu-toggle aria-controls="workspace-nav" aria-expanded="false" hidden><span aria-hidden="true">☰</span> Menu</button>
-      <span class="breadcrumb">Your little nook <span aria-hidden="true">/</span> <strong>My journal</strong></span>
+      <span class="breadcrumb">Tasks</span>
       <div class="header-actions">{% include 'partials/theme-toggle.html' %}<span class="avatar" aria-label="Your profile">{{ username[:1] | upper }}</span></div>
     </header>
     <main id="main" class="dashboard-main journal-main">
       <div class="journal-sky">
         {% include 'partials/aurora.html' %}
         <img class="woodland-view" src="{{ url_for('static', filename='images/woodland-clearing.svg') }}" width="900" height="360" alt="" aria-hidden="true">
-        <div class="journal-sky-copy"><div class="page-heading"><div><p class="handwritten">A little clearing, just for you.</p><h1>Your journal</h1></div><time data-current-date></time></div>
-        <section class="journal-welcome" aria-labelledby="welcome-title"><div><h2 id="welcome-title">Glad you’re here, {{ username }}.</h2></div></section></div>
+        <div class="journal-sky-copy"><div class="page-heading"><h1>Your tasks</h1><time data-current-date></time></div><section class="journal-welcome" aria-labelledby="welcome-title"><h2 id="welcome-title">Glad you’re here, {{ username }}.</h2></section></div>
       </div>
       <div class="journal-grid">
-        <section class="task-workspace notebook" aria-labelledby="tasks-title">
+        <section class="task-workspace notebook" aria-labelledby="tasks-title" data-task-workspace>
           <div class="notebook-binding" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
-          <div class="task-section-heading"><div><p class="specimen-label">A PAGE FOR TODAY</p><h2 id="tasks-title">Your tasks <span class="soon-badge">Coming soon</span></h2></div><button class="button button-small" disabled aria-describedby="task-availability">＋ Add task</button></div>
-          <p id="task-availability" class="availability-note">Task controls will be available when task management launches.</p>
-          <div class="task-toolbar"><div class="search-field"><label class="sr-only" for="task-search">Search tasks (coming soon)</label><span aria-hidden="true">⌕</span><input id="task-search" type="search" placeholder="Search tasks" disabled></div><label class="filter-label">Status <select disabled><option>All statuses</option><option>Pending</option><option>Completed</option></select></label><label class="filter-label">Priority <select disabled><option>All priorities</option><option>High</option><option>Medium</option><option>Low</option></select></label></div>
-          {% include 'partials/journal-empty.html' %}
-          <div class="notebook-footer"><span aria-hidden="true">✧</span> A fresh page, whenever you need one.</div>
+          <h2 id="tasks-title" class="sr-only">Task list</h2>
+          <form action="{{ url_for('create_task') }}" method="POST" class="task-create-form" data-task-create>
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+            <label for="new-task-title">New task</label>
+            <div class="task-create-controls">
+              <input id="new-task-title" name="title" type="text" maxlength="200" required placeholder="What needs doing?" autocomplete="off">
+              <button class="button button-small" type="submit">Add task</button>
+            </div>
+          </form>
+          <p class="task-feedback" data-task-status role="status" aria-live="polite" aria-atomic="true"></p>
+          <p id="task-error" class="task-feedback task-error" data-task-error role="alert" hidden>{{ icon('warning') }}<span data-task-error-text></span></p>
+          <ul class="task-list" data-task-list {% if not tasks %}hidden{% endif %}>
+            {% for task in tasks %}{{ task_row(task, csrf_token) }}{% endfor %}
+          </ul>
+          <div class="journal-empty task-empty" data-task-empty {% if tasks %}hidden{% endif %}>
+            <img src="{{ url_for('static', filename='images/fernward-fox-resting.svg') }}" width="140" height="128" alt="">
+            <p>No tasks yet.</p>
+          </div>
+          <template data-task-template>{{ task_row(none, csrf_token) }}</template>
+          <dialog class="task-dialog" data-delete-dialog aria-labelledby="delete-title" aria-describedby="delete-description">
+            <h2 id="delete-title">Delete task?</h2>
+            <p id="delete-description" data-delete-title></p>
+            <p>This cannot be undone.</p>
+            <div class="dialog-actions"><button class="dialog-cancel" type="button" data-delete-cancel>Cancel</button><button class="button button-small danger-button" type="button" data-delete-confirm>Delete task</button></div>
+          </dialog>
         </section>
         <aside class="companion-nook" aria-labelledby="companion-title">
-          <div class="companion-card"><span class="washi-tape" aria-hidden="true"></span><p class="specimen-label">A LITTLE COMPANY</p><h2 id="companion-title">Your woodland friend</h2><img src="{{ url_for('static', filename='images/fernward-fox-curious.svg') }}" width="230" height="210" data-companion-fox data-curious="{{ url_for('static', filename='images/fernward-fox-curious.svg') }}" data-cheerful="{{ url_for('static', filename='images/fernward-fox-cheerful.svg') }}" alt="Your fox companion tilting its head over a little journal"><p class="companion-message" data-companion-message aria-live="polite" aria-atomic="true">I’ll keep you company.</p><button class="companion-thought" type="button" data-companion-thought hidden>Another little thought <span aria-hidden="true">↻</span></button></div>
-          <div class="fern-note"><div><p class="handwritten">Room to grow</p><p>A fern, slowly unfolding.</p><small>Decorative growth sketches · future feature<br>Not linked to your tasks</small></div><img src="{{ url_for('static', filename='images/fern-growth.svg') }}" width="200" height="85" alt=""></div>
+          <div class="companion-card">
+            <span class="washi-tape" aria-hidden="true"></span>
+            <h2 id="companion-title">Your companion</h2>
+            <img src="{{ url_for('static', filename='images/fernward-fox-curious.svg') }}" width="230" height="210" data-companion-fox data-curious="{{ url_for('static', filename='images/fernward-fox-curious.svg') }}" data-cheerful="{{ url_for('static', filename='images/fernward-fox-cheerful.svg') }}" alt="Your fox companion tilting its head over a little journal">
+            <p class="companion-message" data-companion-message aria-live="polite" aria-atomic="true">I’ll keep you company.</p>
+            <button class="companion-thought" type="button" data-companion-thought hidden>Another thought <span aria-hidden="true">↻</span></button>
+          </div>
+          <div class="fern-note"><div><p class="handwritten">Room to grow</p><small>Decorative preview · future feature</small></div><img src="{{ url_for('static', filename='images/fern-growth.svg') }}" width="200" height="85" alt=""></div>
         </aside>
       </div>
       {% include 'partials/design-sketchbook.html' %}
-      <footer class="workspace-footer"><span>Good things can happen at a gentle pace.</span><span>Fernward <span aria-hidden="true">✿</span></span></footer>
+      <footer class="workspace-footer"><span>Fernward <span aria-hidden="true">✿</span></span></footer>
     </main>
   </div>
 </div>
