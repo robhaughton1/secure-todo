@@ -22,7 +22,7 @@ load_dotenv()
 if os.environ.get('TRUST_PROXY') == '1':
     application.wsgi_app = ProxyFix(application.wsgi_app, x_for=1, x_proto=1, x_host=1)
 
-if os.environ.get('FLASK_ENV') == 'production':
+if os.environ.get('APP_ENV') == 'production':
     application.config.update(
         SESSION_COOKIE_SECURE=True,
         SESSION_COOKIE_HTTPONLY=True,
@@ -162,10 +162,13 @@ def create_authenticated_session(user_id):
     return True
 
 # Configure the SQLAlchemy database URI to use a SQLite database named 'secure_todo.db' 
-application.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
-    'DATABASE_URL',
-    'sqlite:///secure_todo.db'
-)
+database_url = os.environ.get('DATABASE_URL', 'sqlite:///secure_todo.db')
+# Some providers supply the legacy postgres:// scheme; SQLAlchemy needs postgresql+psycopg://.
+if database_url.startswith('postgres://'):
+    database_url = 'postgresql+psycopg://' + database_url[len('postgres://'):]
+elif database_url.startswith('postgresql://'):
+    database_url = 'postgresql+psycopg://' + database_url[len('postgresql://'):]
+application.config['SQLALCHEMY_DATABASE_URI'] = database_url
 database = SQLAlchemy(application)
 
 # Makes the database schema for the User model, which includes an id, username, and password_hash. The username is unique and cannot be null, while the password_hash isnt unique but also cannot be null. The id is the primary key for the User model.
@@ -504,4 +507,4 @@ if __name__ == '__main__':
     with application.app_context():
         database.create_all()  # Create the database tables if they don't exist
 
-    application.run(debug=True)
+    application.run(debug=os.environ.get('APP_ENV') != 'production')
