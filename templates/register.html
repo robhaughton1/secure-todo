@@ -5,6 +5,7 @@
 {% block auth_intro %}A notebook of your own, and a woodland friend along the way.{% endblock %}
 {% block form %}
 <form id="registerForm" class="authForm" method="post" action="/register">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
 {% if error %}
 {{ auth_alert(error) }}
 {% endif %}

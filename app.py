@@ -4,6 +4,7 @@ import hashlib
 import redis
 import requests
 import secrets
+from flask import abort
 from redis.exceptions import RedisError
 from dotenv import load_dotenv
 from flask import Flask, render_template, request, session, redirect, url_for, jsonify, make_response
@@ -108,6 +109,29 @@ def verify_turnstile(token):
     except (requests.RequestException, ValueError):
         return False
 
+# Compares CSRF tokens
+def valid_csrf_token():
+    expected = session.get("csrf_token")
+    supplied = request.form.get("csrf_token")
+
+    return bool(
+        expected
+        and supplied
+        and hmac.compare_digest(expected, supplied)
+    )
+
+# Checks for CSRF token 
+def get_csrf_token():
+    if "csrf_token" not in session:
+        session["csrf_token"] = secrets.token_urlsafe(32)
+
+    return session["csrf_token"]
+
+# 
+@application.context_processor
+def inject_csrf_token():
+    return {"csrf_token": get_csrf_token()}
+
 def create_authenticated_session(user_id):
     session.clear()
     session_id = secrets.token_urlsafe(32)
@@ -172,7 +196,9 @@ def about():
 def login():
 
     # Checks if the request method is POST, retrieves the username and password from the form, prints the username to the console, and renders the home.html template with the username. If the request method is GET, it simply renders the login.html template.
-    if request.method == 'POST':
+    if request.method == "POST":
+        if not valid_csrf_token():
+            abort(403)
 
         username = request.form.get('username', '').strip()
         password = request.form.get('password', '')
@@ -225,7 +251,10 @@ def login():
 @application.route("/logout", methods=["POST"])
 def logout():
     session_id = session.get("session_id")
-
+    
+    if not valid_csrf_token():
+        abort(403)
+        
     if session_id:
         try:
             redis_client.delete(
@@ -244,6 +273,9 @@ def logout():
 @application.route('/register', methods = ['GET', 'POST'])
 def register():
     if request.method == 'POST':
+        if not valid_csrf_token():
+            abort(403)
+
         username = request.form.get('username', '').strip()
         password = request.form.get('password', '')
 
@@ -286,22 +318,29 @@ def register():
     return render_template('register.html')
 
 def authenticated_user():
+    # Retrieve the user_id and session_id from the Flask session. If either is missing, redirect the user to the login page.
     user_id = session.get("user_id")
     session_id = session.get("session_id")
+
     if not user_id or not session_id:
         return None, redirect(url_for("login"))
+
+    # Check if the session_id is valid by looking it up in Redis. If Redis is unavailable, log an error and return a 503 Service Unavailable response. If the stored user_id does not match the user_id from the session, clear the session and redirect to the login page.
     try:
         stored_user_id = redis_client.get(f"fernward:session:{session_id}")
     except RedisError:
         application.logger.error("Redis unavailable during session validation")
         return None, ("Authentication service temporarily unavailable.", 503)
+
     if stored_user_id != str(user_id):
         session.clear()
         return None, redirect(url_for("login"))
+
     user = database.session.get(User, user_id)
     if not user:
         session.clear()
         return None, redirect(url_for("login"))
+    
     return user, None
 
 # Route to create a new task for the authenticated user. It checks for CSRF token validity, validates the task title, and adds the task to the database.
