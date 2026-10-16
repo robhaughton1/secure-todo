@@ -10,6 +10,7 @@
 {% block auth_intro %}Come in, settle down, and pick up your next small plan.{% endblock %}
 {% block form %}
 <form id="loginForm" class="authForm" method="post" action="/login">
+<input type="hidden" name="csrf_token" value="{{ csrf_token }}">
 {% if error %}
 {{ auth_alert(error) }}
 {% endif %}

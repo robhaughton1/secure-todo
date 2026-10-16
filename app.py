@@ -6,7 +6,7 @@ import requests
 import secrets
 from redis.exceptions import RedisError
 from dotenv import load_dotenv
-from flask import Flask, render_template, request, session, redirect, url_for, jsonify, make_response
+from flask import Flask, render_template, request, session, redirect, url_for, abort, jsonify, make_response
 from datetime import datetime, timezone
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -108,6 +108,23 @@ def verify_turnstile(token):
     except (requests.RequestException, ValueError):
         return False
 
+def valid_csrf_token():
+    expected = session.get("csrf_token")
+    supplied = request.form.get("csrf_token")
+    return bool(expected and supplied and hmac.compare_digest(expected, supplied))
+
+
+def get_csrf_token():
+    if "csrf_token" not in session:
+        session["csrf_token"] = secrets.token_urlsafe(32)
+    return session["csrf_token"]
+
+
+@application.context_processor
+def inject_csrf_token():
+    return {"csrf_token": get_csrf_token()}
+
+
 def create_authenticated_session(user_id):
     session.clear()
     session_id = secrets.token_urlsafe(32)
@@ -173,6 +190,8 @@ def login():
 
     # Checks if the request method is POST, retrieves the username and password from the form, prints the username to the console, and renders the home.html template with the username. If the request method is GET, it simply renders the login.html template.
     if request.method == 'POST':
+        if not valid_csrf_token():
+            abort(403)
 
         username = request.form.get('username', '').strip()
         password = request.form.get('password', '')
@@ -224,6 +243,8 @@ def login():
 # Logout route logic, handling the POST request to log out the user. It deletes the session from Redis and clears the session data in Flask, then redirects to the home page.
 @application.route("/logout", methods=["POST"])
 def logout():
+    if not valid_csrf_token():
+        abort(403)
     session_id = session.get("session_id")
 
     if session_id:
@@ -244,6 +265,8 @@ def logout():
 @application.route('/register', methods = ['GET', 'POST'])
 def register():
     if request.method == 'POST':
+        if not valid_csrf_token():
+            abort(403)
         username = request.form.get('username', '').strip()
         password = request.form.get('password', '')
 

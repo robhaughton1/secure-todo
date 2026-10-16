@@ -12,7 +12,7 @@
       <a class="sidebar-link active" href="{{ url_for('dashboard') }}" aria-current="page">{{ icon('tasks') }} Tasks</a>
     </nav>
     <div class="sidebar-bottom">
-      <form action="{{ url_for('logout') }}" method="POST"><button class="sidebar-link logout" type="submit">{{ icon('logout') }} Log out</button></form>
+      <form action="{{ url_for('logout') }}" method="POST"><input type="hidden" name="csrf_token" value="{{ csrf_token }}"><button class="sidebar-link logout" type="submit">{{ icon('logout') }} Log out</button></form>
     </div>
   </aside>
   <div class="workspace">
