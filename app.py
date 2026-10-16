@@ -12,10 +12,22 @@ from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 # Initialize the Flask application and load environment variables from the .env file
 application = Flask(__name__)
 load_dotenv()
+
+# Only trust a single reverse proxy when explicitly configured for hosting.
+if os.environ.get('TRUST_PROXY') == '1':
+    application.wsgi_app = ProxyFix(application.wsgi_app, x_for=1, x_proto=1, x_host=1)
+
+if os.environ.get('APP_ENV') == 'production':
+    application.config.update(
+        SESSION_COOKIE_SECURE=True,
+        SESSION_COOKIE_HTTPONLY=True,
+        SESSION_COOKIE_SAMESITE='Lax',
+    )
 
 # Configure Flask-Limiter for rate limiting to prevent abuse and brute-force attacks. It uses Redis as the storage backend to keep track of request counts and enforce limits based on the client's IP address.
 limiter = Limiter(
@@ -103,7 +115,10 @@ def verify_turnstile(token):
         response.raise_for_status()
         result = response.json()
 
-        return (result.get("success") is True and result.get("hostname") in {"localhost", "127.0.0.1"})
+        allowed_hostnames = {host.strip() for host in os.environ.get(
+            "TURNSTILE_ALLOWED_HOSTNAMES", "localhost,127.0.0.1"
+        ).split(",") if host.strip()}
+        return result.get("success") is True and result.get("hostname") in allowed_hostnames
 
     except (requests.RequestException, ValueError):
         return False
@@ -147,10 +162,13 @@ def create_authenticated_session(user_id):
     return True
 
 # Configure the SQLAlchemy database URI to use a SQLite database named 'secure_todo.db' 
-application.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
-    'DATABASE_URL',
-    'sqlite:///secure_todo.db'
-)
+database_url = os.environ.get('DATABASE_URL', 'sqlite:///secure_todo.db')
+# Some providers supply the legacy postgres:// scheme; SQLAlchemy needs postgresql+psycopg://.
+if database_url.startswith('postgres://'):
+    database_url = 'postgresql+psycopg://' + database_url[len('postgres://'):]
+elif database_url.startswith('postgresql://'):
+    database_url = 'postgresql+psycopg://' + database_url[len('postgresql://'):]
+application.config['SQLALCHEMY_DATABASE_URI'] = database_url
 database = SQLAlchemy(application)
 
 # Makes the database schema for the User model, which includes an id, username, and password_hash. The username is unique and cannot be null, while the password_hash isnt unique but also cannot be null. The id is the primary key for the User model.
@@ -489,4 +507,4 @@ if __name__ == '__main__':
     with application.app_context():
         database.create_all()  # Create the database tables if they don't exist
 
-    application.run(debug=True)
+    application.run(debug=os.environ.get('APP_ENV') != 'production')
