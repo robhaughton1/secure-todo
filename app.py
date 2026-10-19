@@ -181,6 +181,7 @@ class Task(database.Model):
     id = database.Column(database.Integer, primary_key=True)
     user_id = database.Column(database.Integer, database.ForeignKey('user.id'), nullable=False, index=True)
     title = database.Column(database.String(200), nullable=False)
+    priority = database.Column(database.String, nullable=False)
     completed = database.Column(database.Boolean, nullable=False, default=False)
     created_at = database.Column(database.DateTime, nullable=False, default=lambda: datetime.now(timezone.utc))
 
@@ -368,7 +369,7 @@ def task_auth_error(error):
 
 
 def task_payload(task):
-    return {"id": task.id, "title": task.title, "completed": task.completed,
+    return {"id": task.id, "title": task.title, "completed": task.completed, "priority": task.priority,
             "toggle_url": url_for("toggle_task", task_id=task.id),
             "delete_url": url_for("delete_task", task_id=task.id)}
 
@@ -393,8 +394,11 @@ def create_task():
     title = request.form.get("title", "").strip()
     if not title or len(title) > 200:
         return task_error("Task title must be between 1 and 200 characters.", 400)
+
+    priority = request.form.get("priority", "").strip()
+
     
-    task = Task(user_id=user.id, title=title)
+    task = Task(user_id=user.id, title=title, priority=priority)
     database.session.add(task)
     database.session.commit()
 

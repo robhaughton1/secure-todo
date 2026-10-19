@@ -36,6 +36,11 @@
             <label for="new-task-title">New task</label>
             <div class="task-create-controls">
               <input id="new-task-title" name="title" type="text" maxlength="200" required placeholder="What needs doing?" autocomplete="off">
+                <select id="task-priority" name="priority" class="task-priority-select">
+                    <option value="low">🟢</option>
+                    <option value="medium" selected>🟠</option>
+                    <option value="high">🔴</option>
+                </select>
               <button class="button button-small" type="submit">Add task</button>
             </div>
           </form>
