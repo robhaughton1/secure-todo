@@ -69,6 +69,39 @@ class TaskRoutes(unittest.TestCase):
         self.assertNotIn('<img src=x', page)
         self.assertIn('data-task-delete', page)
 
+    def test_priorities_create_toggle_delete_in_both_formats(self):
+        m = self.module
+        for json in (True, False):
+            for priority in ('low', 'medium', 'high'):
+                response = self.post('/tasks', {'title': 'Priority task', 'priority': priority}, json)
+                self.assertEqual(response.status_code, 201 if json else 303)
+                task = m.database.session.scalar(m.database.select(m.Task).order_by(m.Task.id.desc()))
+                self.assertEqual(task.priority, priority)
+                if json:
+                    self.assertEqual(response.json['task']['priority'], priority)
+                for completed in (True, False):
+                    result = self.post(f'/tasks/{task.id}/toggle', json=json)
+                    self.assertEqual(result.status_code, 200 if json else 303)
+                    m.database.session.refresh(task)
+                    self.assertEqual(task.completed, completed)
+                    self.assertEqual(task.priority, priority)
+                task_id = task.id
+                self.assertEqual(self.post(f'/tasks/{task_id}/delete', {'confirm_delete': 'yes'}, json).status_code, 200 if json else 303)
+                self.assertIsNone(m.database.session.get(m.Task, task_id))
+
+    def test_priority_defaults_normalization_and_invalid_values(self):
+        m = self.module
+        response = self.post('/tasks', {'title': 'Default'})
+        self.assertEqual(response.json['task']['priority'], 'medium')
+        response = self.post('/tasks', {'title': 'Normalized', 'priority': ' HIGH '})
+        self.assertEqual(response.json['task']['priority'], 'high')
+        before = m.database.session.scalar(m.database.select(m.database.func.count(m.Task.id)))
+        for json in (True, False):
+            for priority in ('', 'urgent', '1', '<script>alert(1)</script>', 'low,high'):
+                self.assertEqual(self.post('/tasks', {'title': 'Rejected', 'priority': priority}, json).status_code, 400)
+        after = m.database.session.scalar(m.database.select(m.database.func.count(m.Task.id)))
+        self.assertEqual(before, after)
+
     def test_validation_in_both_formats(self):
         for json in (True, False):
             for title in ('', '  ', 'x' * 201):
@@ -139,7 +172,8 @@ class TaskRoutes(unittest.TestCase):
             'data-task-error': True, 'data-task-list': True, 'data-task-empty': False
         })
         self.assertNotIn('task-search', empty)
-        self.assertNotIn('<select', empty)
+        self.assertIn('name="priority"', empty)
+        self.assertNotIn('task-toolbar', empty)
         self.assertNotIn('sidebar-link unavailable', empty)
         self.assertIn('Glad you’re here, owner.', empty)
         self.task()
