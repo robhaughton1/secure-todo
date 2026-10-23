@@ -397,7 +397,6 @@ def create_task():
 
     priority = request.form.get("priority", "").strip()
 
-    
     task = Task(user_id=user.id, title=title, priority=priority)
     database.session.add(task)
     database.session.commit()
