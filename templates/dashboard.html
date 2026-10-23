@@ -36,6 +36,15 @@
             <label for="new-task-title">New task</label>
             <div class="task-create-controls">
               <input id="new-task-title" name="title" type="text" maxlength="200" required placeholder="What needs doing?" autocomplete="off">
+                <div class="task-priority-select">
+                    <button class="dropdown-toggle" type="button">Priority</button>
+                      <ul class="dropdown-menu-priorities">
+                            <li><a href="#" data-value="low">Low</a></li>
+                            <li><a href="#" data-value="medium">Medium</a></li>
+                            <li><a href="#" data-value="high">High</a></li>
+                        </ul>
+                     <input type="hidden" name="priority" id="priority-input">
+                </div>
               <button class="button button-small" type="submit">Add task</button>
             </div>
           </form>
@@ -72,4 +81,36 @@
     </main>
   </div>
 </div>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const dropdownToggle = document.querySelector('.dropdown-toggle');
+  const dropdownMenu = document.querySelector('.dropdown-menu-priorities');
+  const priorityInput = document.getElementById('priority-input');
+
+  // Toggle menu on button click
+  dropdownToggle.addEventListener('click', (e) => {
+    e.preventDefault();
+    dropdownMenu.classList.toggle('open');
+  });
+
+  // Handle option selection
+  dropdownMenu.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      const value = link.getAttribute('data-value');
+      priorityInput.value = value;
+      dropdownToggle.textContent = link.textContent;
+      dropdownMenu.classList.remove('open');
+    });
+  });
+
+  // Close menu when clicking outside
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.task-priority-select')) {
+      dropdownMenu.classList.remove('open');
+    }
+  });
+});
+</script>
+
 {% endblock %}

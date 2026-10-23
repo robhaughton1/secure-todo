@@ -60,7 +60,7 @@ export function initializeTasks() {
     return payload;
   };
   const setTask = (row, task) => {
-    if (!Number.isInteger(task?.id) || typeof task.title !== 'string' || typeof task.completed !== 'boolean') throw new Error('Unexpected server response. Reload to check your tasks.');
+    if (!Number.isInteger(task?.id) || typeof task.title !== 'string' || typeof task.priority !== 'string' || typeof task.completed !== 'boolean') throw new Error('Unexpected server response. Reload to check your tasks.');
     for (const [selector, url] of [['[data-task-toggle]', task.toggle_url], ['[data-task-delete]', task.delete_url]]) {
       const target = new URL(url, location.href);
       if (target.origin !== location.origin) throw new Error('Unexpected server response. Reload to check your tasks.');
@@ -68,6 +68,7 @@ export function initializeTasks() {
     }
     row.dataset.taskId = String(task.id);
     row.querySelector('.task-title').textContent = task.title;
+    row.querySelector('.task-priority').textContent = task.priority;
     row.querySelector('input[type=checkbox]').checked = task.completed;
     row.querySelector('.task-delete-button').setAttribute('aria-label', `Delete task: ${task.title}`);
     row.classList.toggle('is-complete', task.completed);

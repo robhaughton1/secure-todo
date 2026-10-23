@@ -7,6 +7,9 @@
       <input type="checkbox" {% if task and task.completed %}checked{% endif %}>
       <span class="task-title">{{ task.title if task else '' }}</span>
     </label>
+    <label>
+      <span class="task-priority">{{ task.priority if task else '' }}</span>
+    </label>
     <button class="task-save" type="submit">Apply change</button>
   </form>
   <form action="{{ url_for('delete_task', task_id=task.id) if task else '' }}" method="POST" data-task-delete>
