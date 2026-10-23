@@ -181,7 +181,7 @@ class Task(database.Model):
     id = database.Column(database.Integer, primary_key=True)
     user_id = database.Column(database.Integer, database.ForeignKey('user.id'), nullable=False, index=True)
     title = database.Column(database.String(200), nullable=False)
-    priority = database.Column(database.String, nullable=False)
+    priority = database.Column(database.String(16), nullable=False, default='medium', server_default='medium')
     completed = database.Column(database.Boolean, nullable=False, default=False)
     created_at = database.Column(database.DateTime, nullable=False, default=lambda: datetime.now(timezone.utc))
 
@@ -395,7 +395,9 @@ def create_task():
     if not title or len(title) > 200:
         return task_error("Task title must be between 1 and 200 characters.", 400)
 
-    priority = request.form.get("priority", "").strip()
+    priority = request.form.get("priority", "medium").strip().lower()
+    if priority not in {"low", "medium", "high"}:
+        return task_error("Invalid task priority.", 400)
 
     task = Task(user_id=user.id, title=title, priority=priority)
     database.session.add(task)
